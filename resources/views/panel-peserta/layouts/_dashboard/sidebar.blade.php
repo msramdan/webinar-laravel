@@ -6,10 +6,15 @@
         <div class="sidebar-brand-text mx-3">Seminar</div>
     </a>
     <hr class="sidebar-divider my-0">
-    <li class="nav-item {{ set_active('home') }}">
-        <a class="nav-link" href="">
-            <i class="fas fa-fw fa-home"></i>
-            <span>Home</span></a>
+    <li class="nav-item">
+        <a class="nav-link" href="{{route('panel-peserta.seminarSaya')}}">
+            <i class="fas fa-fw fa-list"></i>
+            <span>Seminar Saya</span></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{route('panel-peserta.semuaSeminar')}}">
+            <i class="fas fa-fw fa-table"></i>
+            <span>Semua Seminar</span></a>
     </li>
 
     <div class="text-center d-none d-md-inline">

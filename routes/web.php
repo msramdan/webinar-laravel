@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PanelPeserta\AuthController;
+use App\Http\Controllers\PanelPeserta\DashboardPesertaController;
 use App\Http\Controllers\PembicaraController;
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\ScanController;
@@ -22,11 +23,11 @@ Route::prefix('panel-peserta')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('panel-peserta.logout');
 
-    // Route yang membutuhkan auth panel-peserta
     Route::middleware('auth:panel-peserta')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('panel-peserta.dashboard');
-        })->name('panel-peserta.dashboard');
+        Route::get('/seminar-saya', [DashboardPesertaController::class, 'seminarSaya'])
+            ->name('panel-peserta.seminarSaya');
+        Route::get('/semua-seminar', [DashboardPesertaController::class, 'semuaSeminar'])
+            ->name('panel-peserta.semuaSeminar');
     });
 });
 

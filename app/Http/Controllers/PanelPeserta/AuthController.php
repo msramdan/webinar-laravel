@@ -60,7 +60,7 @@ class AuthController extends Controller
 
         Auth::guard('panel-peserta')->loginUsingId($peserta->id);
 
-        return redirect()->route('panel-peserta.dashboard');
+        return redirect()->route('panel-peserta.seminarSaya');
     }
 
     public function showLoginForm()
@@ -82,7 +82,7 @@ class AuthController extends Controller
         if (Auth::guard('panel-peserta')->attempt($credentials, $request->remember)) {
             $request->session()->regenerate();
 
-            return redirect()->route('panel-peserta.dashboard');
+            return redirect()->route('panel-peserta.seminarSaya');
         }
 
         return back()->withErrors([
