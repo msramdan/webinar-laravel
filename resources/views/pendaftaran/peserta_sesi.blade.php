@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', __('Create Pendaftaran'))
+@section('title', __('Daftar Peserta Seminar'))
 
 @section('content')
     <div class="page-heading">
         <div class="page-title">
             <div class="row">
                 <div class="col-12 col-md-8 order-md-1 order-last">
-                    <h3>{{ __('Pendaftaran') }}</h3>
+                    <h3>{{ __('Pendaftaran Seminar') }}</h3>
                     <p class="text-subtitle text-muted">
-                        {{ __('Create a new pendaftaran.') }}
+                        {{ __('Daftar Peserta Seminar.') }}
                     </p>
                 </div>
 
@@ -21,28 +21,17 @@
                         <a href="{{ route('pendaftaran.index') }}">{{ __('Pendaftaran') }}</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">
-                        {{ __('Create') }}
+                        {{ __('Daftar Peserta') }}
                     </li>
                 </x-breadcrumb>
             </div>
         </div>
 
         <section class="section">
-
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
-                            <form action="{{ route('pendaftaran.store') }}" method="POST">
-                                @csrf
-                                @method('POST')
-
-                                @include('pendaftaran.include.form')
-
-                                <a href="{{ route('pendaftaran.index') }}" class="btn btn-secondary">{{ __('Back') }}</a>
-
-                                <button type="submit" class="btn btn-primary">{{ __('Save') }}</button>
-                            </form>
                         </div>
                     </div>
                 </div>

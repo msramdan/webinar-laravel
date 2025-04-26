@@ -24,10 +24,9 @@
             <header>
                 <nav class="navbar navbar-expand navbar-light navbar-top">
                     <div class="container-fluid">
-                        <a href="#" class="burger-btn d-block">
+                        <a href="#" class="burger-btn d-block d-lg-none">
                             <i class="bi bi-justify fs-3"></i>
                         </a>
-
                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                             data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                             aria-expanded="false" aria-label="Toggle navigation">
@@ -36,19 +35,6 @@
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ms-auto mb-lg-0">
                                 <li class="nav-item dropdown me-1">
-                                    <a class="nav-link active dropdown-toggle text-gray-600" href="#"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-flag bi-sub fs-4"></i>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                                        <li>
-                                            <h6 class="dropdown-header">{{ __('Language') }}</h6>
-                                        </li>
-                                        <li><a class="dropdown-item{{ config('app.locale') == 'id' ? ' active' : '' }}"
-                                                href="#">{{ __('Indonesia') }}</a></li>
-                                        <li><a class="dropdown-item{{ config('app.locale') == 'en' ? ' active' : '' }}"
-                                                href="#">{{ __('English') }}</a></li>
-                                    </ul>
                                 </li>
                             </ul>
                             @auth
@@ -58,7 +44,7 @@
                                             <div class="user-name text-end me-3">
                                                 <h6 class="mb-0 text-gray-600">{{ auth()?->user()?->name }}</h6>
                                                 <p class="mb-0 text-sm text-gray-600">
-                                                    {{ isset(auth()?->user()?->roles) ? implode(auth()?->user()?->roles?->map(fn ($role) => $role->name)->toArray()) : '-' }}
+                                                    {{ isset(auth()?->user()?->roles) ? implode(auth()?->user()?->roles?->map(fn($role) => $role->name)->toArray()) : '-' }}
                                                 </p>
                                             </div>
                                             <div class="user-img d-flex align-items-center">
@@ -76,10 +62,6 @@
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton"
                                         style="min-width: 11rem;">
-                                        <li>
-                                            <h6 class="dropdown-header">{{ __('Hello') }}, {{ auth()?->user()?->name }}!
-                                            </h6>
-                                        </li>
                                         <li>
                                             <a class="dropdown-item" href="{{ route('profile') }}"><i
                                                     class="icon-mid bi bi-person-fill me-2"></i>{{ __('My Profile') }}</a>
