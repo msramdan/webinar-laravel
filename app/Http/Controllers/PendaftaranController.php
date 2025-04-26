@@ -9,7 +9,7 @@ use Illuminate\Http\{JsonResponse};
 use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Str;
 
 class PendaftaranController extends Controller implements HasMiddleware
 {
@@ -125,11 +125,15 @@ class PendaftaranController extends Controller implements HasMiddleware
                 ->with('error', 'Peserta sudah terdaftar pada sesi ini');
         }
 
+        // Generate token only if status is Approved
+        $token = ($request->status == 'Approved') ? Str::random(32) : null;
+
         // Rule 4: Jika semua status Rejected → BOLEH DAFTAR LAGI
         DB::table('pendaftaran')->insert([
             'sesi_id' => $request->sesi_id,
             'peserta_id' => $request->peserta_id,
             'status' => $request->status,
+            'token' => $token,
             'tanggal_pengajuan' => now(),
             'created_at' => now(),
             'updated_at' => now()
@@ -174,11 +178,15 @@ class PendaftaranController extends Controller implements HasMiddleware
                 ->with('error', 'Sudah ada status WAITING di sesi lain');
         }
 
+        // Generate token or set to null based on status
+        $token = ($request->status == 'Approved') ? Str::random(32) : null;
+
         DB::table('pendaftaran')
             ->where('id', $id)
             ->update([
                 'sesi_id' => $request->sesi_id,
                 'status' => $request->status,
+                'token' => $token,
                 'updated_at' => now()
             ]);
 

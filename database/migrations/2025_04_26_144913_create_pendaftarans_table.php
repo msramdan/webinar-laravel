@@ -17,6 +17,7 @@ return new class extends Migration
 			$table->foreignId('peserta_id')->constrained('peserta')->restrictOnUpdate()->cascadeOnDelete();
 			$table->enum('status', ['Waiting', 'Approved', 'Rejected']);
 			$table->dateTime('tanggal_pengajuan');
+            $table->string('token', 255);
             $table->timestamps();
         });
     }
