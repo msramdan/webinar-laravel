@@ -89,7 +89,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '{{ route('panel-peserta.register') }}',
+                        url: '{{ route('panel-peserta.register.seminar') }}',
                         method: 'POST',
                         data: {
                             _token: '{{ csrf_token() }}',
