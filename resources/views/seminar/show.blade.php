@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', __('Detail of Peserta'))
+@section('title', __('Detail of Seminar'))
 
 @section('content')
     <div class="page-heading">
         <div class="page-title">
             <div class="row">
                 <div class="col-12 col-md-8 order-md-1 order-last">
-                    <h3>{{ __('Peserta') }}</h3>
+                    <h3>{{ __('Seminar') }}</h3>
                     <p class="text-subtitle text-muted">
-                        {{ __('Detail of peserta.') }}
+                        {{ __('Detail of seminar.') }}
                     </p>
                 </div>
 
@@ -18,7 +18,7 @@
                         <a href="/">{{ __('Dashboard') }}</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('peserta.index') }}">{{ __('Peserta') }}</a>
+                        <a href="{{ route('seminar.index') }}">{{ __('Seminar') }}</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">
                         {{ __('Detail') }}
@@ -35,25 +35,33 @@
                             <div class="table-responsive">
                                 <table class="table table-hover table-striped">
                                     <tr>
-                                        <td class="fw-bold">{{ __('Nama') }}</td>
-                                        <td>{{ $peserta->nama }}</td>
+                                        <td class="fw-bold">{{ __('Nama Seminar') }}</td>
+                                        <td>{{ $seminar->nama_seminar }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="fw-bold">{{ __('No Telepon') }}</td>
-                                        <td>{{ $peserta->no_telepon }}</td>
+                                        <td class="fw-bold">{{ __('Deskripsi') }}</td>
+                                        <td>{{ $seminar->deskripsi }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="fw-bold">{{ __('Email') }}</td>
-                                        <td>{{ $peserta->email }}</td>
+                                        <td class="fw-bold">{{ __('Lampiran') }}</td>
+                                        <td>
+                                            @if (!$seminar->lampiran)
+                                                <img src="https://via.placeholder.com/350?text=No+Image+Avaiable"
+                                                    alt="Lampiran" class="rounded img-fluid">
+                                            @else
+                                                <img src="{{ asset('storage/uploads/lampirans/' . $seminar->lampiran) }}"
+                                                    alt="Lampiran" style="width: 200px">
+                                            @endif
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <td class="fw-bold">{{ __('Alamat') }}</td>
-                                        <td>{{ $peserta->alamat }}</td>
+                                        <td class="fw-bold">{{ __('Is Active') }}</td>
+                                        <td>{{ $seminar->is_active }}</td>
                                     </tr>
                                 </table>
                             </div>
 
-                            <a href="{{ route('peserta.index') }}" class="btn btn-secondary">{{ __('Back') }}</a>
+                            <a href="{{ route('seminar.index') }}" class="btn btn-secondary">{{ __('Back') }}</a>
                         </div>
                     </div>
                 </div>

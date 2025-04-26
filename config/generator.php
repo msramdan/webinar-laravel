@@ -127,6 +127,22 @@ return [
             ]
         ],
         [
+            'header' => 'Seminar',
+            'permissions' => [
+                'seminar view'
+            ],
+            'menus' => [
+                [
+                    'title' => 'Seminar',
+                    'icon' => '<i class="bi bi-people"></i>',
+                    'route' => '/seminar',
+                    'permission' => 'seminar view',
+                    'permissions' => [],
+                    'submenus' => []
+                ]
+            ]
+        ],
+        [
             'header' => 'Utilities',
             'permissions' => [
                 'user view',
@@ -157,6 +173,12 @@ return [
                             'title' => 'Roles & permissions',
                             'route' => '/roles',
                             'permission' => 'role & permission view'
+                        ],
+                        [
+                            'title' => 'Backup Database',
+                            'route' => '/backup-database',
+                            'permission' => 'backup database view',
+                            'icon' => '<i class="bi bi-database"></i>'
                         ]
                     ]
                 ]

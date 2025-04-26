@@ -207,5 +207,7 @@ return [
             ]
         ],
         ['group' => 'peserta', 'access' => ['peserta view', 'peserta create', 'peserta edit', 'peserta delete']],
+        ['group' => 'seminar', 'access' => ['seminar view', 'seminar create', 'seminar edit', 'seminar delete']],
+        ['group' => 'backup databases', 'access' => ['backup database view']],
     ],
 ];
