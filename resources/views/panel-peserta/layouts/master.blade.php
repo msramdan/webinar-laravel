@@ -29,7 +29,6 @@
     @include('panel-peserta.layouts._dashboard.logoutModal')
     {{-- script --}}
     @include('panel-peserta.layouts._dashboard.script')
-    @stack('js')
     @include('sweetalert::alert')
 </body>
 

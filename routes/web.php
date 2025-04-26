@@ -28,6 +28,8 @@ Route::prefix('panel-peserta')->group(function () {
             ->name('panel-peserta.seminarSaya');
         Route::get('/semua-seminar', [DashboardPesertaController::class, 'semuaSeminar'])
             ->name('panel-peserta.semuaSeminar');
+        Route::get('/{id}/peserta-download-qrcode', [DashboardPesertaController::class, 'downloadQRCode'])
+            ->name('pendaftaran.qrcode.download.peserta');
     });
 });
 
