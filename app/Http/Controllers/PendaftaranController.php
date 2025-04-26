@@ -50,26 +50,35 @@ class PendaftaranController extends Controller implements HasMiddleware
         return view('pendaftaran.index');
     }
 
-    public function pesertaSesi($id): View
+    public function pesertaSesi($id, Request $request): View
     {
         $sessions = DB::table('sesi_seminar')
             ->where('seminar_id', $id)
             ->orderBy('tanggal_pelaksanaan')
             ->get();
 
-        // Get all participants for all sessions of this seminar
-        $participants = DB::table('pendaftaran')
+        // Get selected session from URL parameter
+        $selectedSession = $request->query('sesi_id', 'all');
+
+        // Query for participants
+        $query = DB::table('pendaftaran')
             ->join('peserta', 'pendaftaran.peserta_id', '=', 'peserta.id')
             ->join('sesi_seminar', 'pendaftaran.sesi_id', '=', 'sesi_seminar.id')
-            ->where('sesi_seminar.seminar_id', $id)
-            ->select(
-                'pendaftaran.id as pendaftaran_id',
-                'pendaftaran.status',
-                'pendaftaran.tanggal_pengajuan',
-                'peserta.*',
-                'sesi_seminar.nama_sesi',
-                'sesi_seminar.id as sesi_id'
-            )
+            ->where('sesi_seminar.seminar_id', $id);
+
+        // Apply session filter if not 'all'
+        if ($selectedSession !== 'all') {
+            $query->where('sesi_seminar.id', $selectedSession);
+        }
+
+        $participants = $query->select(
+            'pendaftaran.id as pendaftaran_id',
+            'pendaftaran.status',
+            'pendaftaran.tanggal_pengajuan',
+            'peserta.*',
+            'sesi_seminar.nama_sesi',
+            'sesi_seminar.id as sesi_id'
+        )
             ->orderBy('pendaftaran.tanggal_pengajuan', 'desc')
             ->get();
 
@@ -78,7 +87,7 @@ class PendaftaranController extends Controller implements HasMiddleware
             ->orderBy('nama')
             ->get();
 
-        return view('pendaftaran.peserta_sesi', compact('sessions', 'participants', 'id', 'allPeserta'));
+        return view('pendaftaran.peserta_sesi', compact('sessions', 'participants', 'id', 'allPeserta', 'selectedSession'));
     }
 
     public function store(Request $request)

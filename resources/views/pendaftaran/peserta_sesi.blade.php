@@ -35,19 +35,24 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <h4>Filter Peserta</h4>
                                     <div class="form-group">
                                         <label for="session_filter">Sesi Seminar</label>
                                         <select class="form-select" id="session_filter">
-                                            <option value="all">Semua Sesi</option>
+                                            <option value="all" {{ $selectedSession == 'all' ? 'selected' : '' }}>Semua Sesi</option>
                                             @foreach($sessions as $session)
-                                                <option value="{{ $session->id }}">{{ $session->nama_sesi }}</option>
+                                                <option value="{{ $session->id }}" {{ $selectedSession == $session->id ? 'selected' : '' }}>
+                                                    {{ $session->nama_sesi }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-8 text-end">
+                                <div class="col-md-6 text-end">
+                                    <a href="{{ route('pendaftaran.index') }}" class="btn btn-secondary me-2">
+                                        <i class="fas fa-arrow-left"></i> Kembali
+                                    </a>
                                     <button class="btn btn-primary" id="btnCreate">
                                         <i class="fas fa-plus"></i> Tambah Pendaftaran
                                     </button>
@@ -70,35 +75,37 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($participants as $key => $participant)
-                                        <tr data-sesi="{{ $participant->sesi_id }}">
-                                            <td>{{ $key + 1 }}</td>
-                                            <td>{{ $participant->nama }}</td>
-                                            <td>{{ $participant->email }}</td>
-                                            <td>{{ $participant->no_telepon }}</td>
-                                            <td>{{ $participant->nama_sesi }}</td>
-                                            <td>
-                                                <span class="badge bg-{{ $participant->status == 'Approved' ? 'success' : ($participant->status == 'Rejected' ? 'danger' : 'warning') }}">
-                                                    {{ $participant->status }}
-                                                </span>
-                                            </td>
-                                            <td>{{ \Carbon\Carbon::parse($participant->tanggal_pengajuan)->format('d/m/Y H:i') }}</td>
-                                            <td>
-                                                <button class="btn btn-sm btn-primary edit-peserta"
-                                                    data-id="{{ $participant->pendaftaran_id }}"
-                                                    data-peserta-id="{{ $participant->id }}"
-                                                    data-nama="{{ $participant->nama }}"
-                                                    data-sesi="{{ $participant->sesi_id }}"
-                                                    data-status="{{ $participant->status }}">
-                                                    <i class="fa fa-pencil-alt"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-danger delete-peserta"
-                                                    data-id="{{ $participant->pendaftaran_id }}"
-                                                    data-nama="{{ $participant->nama }}">
-                                                    <i class="ace-icon fa fa-trash-alt"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
+                                        @foreach ($participants as $key => $participant)
+                                            <tr>
+                                                <td>{{ $key + 1 }}</td>
+                                                <td>{{ $participant->nama }}</td>
+                                                <td>{{ $participant->email }}</td>
+                                                <td>{{ $participant->no_telepon }}</td>
+                                                <td>{{ $participant->nama_sesi }}</td>
+                                                <td>
+                                                    <span
+                                                        class="badge bg-{{ $participant->status == 'Approved' ? 'success' : ($participant->status == 'Rejected' ? 'danger' : 'warning') }}">
+                                                        {{ $participant->status }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ \Carbon\Carbon::parse($participant->tanggal_pengajuan)->format('d/m/Y H:i') }}
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-primary edit-peserta"
+                                                        data-id="{{ $participant->pendaftaran_id }}"
+                                                        data-peserta-id="{{ $participant->id }}"
+                                                        data-nama="{{ $participant->nama }}"
+                                                        data-sesi="{{ $participant->sesi_id }}"
+                                                        data-status="{{ $participant->status }}">
+                                                        <i class="fa fa-pencil-alt"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger delete-peserta"
+                                                        data-id="{{ $participant->pendaftaran_id }}"
+                                                        data-nama="{{ $participant->nama }}">
+                                                        <i class="ace-icon fa fa-trash-alt"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
@@ -126,15 +133,16 @@
                             <label for="peserta_id">Peserta</label>
                             <select class="form-select" id="peserta_id" name="peserta_id" required>
                                 <option value="">Pilih Peserta</option>
-                                @foreach($allPeserta as $peserta)
-                                    <option value="{{ $peserta->id }}">{{ $peserta->nama }} ({{ $peserta->email }})</option>
+                                @foreach ($allPeserta as $peserta)
+                                    <option value="{{ $peserta->id }}">{{ $peserta->nama }} ({{ $peserta->email }})
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="sesi_id">Sesi Seminar</label>
                             <select class="form-select" id="sesi_id" name="sesi_id" required>
-                                @foreach($sessions as $session)
+                                @foreach ($sessions as $session)
                                     <option value="{{ $session->id }}">{{ $session->nama_sesi }}</option>
                                 @endforeach
                             </select>
@@ -177,7 +185,7 @@
                         <div class="form-group">
                             <label for="edit_sesi_id">Sesi Seminar</label>
                             <select class="form-select" id="edit_sesi_id" name="sesi_id" required>
-                                @foreach($sessions as $session)
+                                @foreach ($sessions as $session)
                                     <option value="{{ $session->id }}">{{ $session->nama_sesi }}</option>
                                 @endforeach
                             </select>
@@ -212,7 +220,8 @@
                     @csrf
                     @method('DELETE')
                     <div class="modal-body">
-                        <p>Apakah Anda yakin ingin menghapus pendaftaran untuk peserta <strong id="delete_nama"></strong>?</p>
+                        <p>Apakah Anda yakin ingin menghapus pendaftaran untuk peserta <strong id="delete_nama"></strong>?
+                        </p>
                         <p class="text-danger">Data yang dihapus tidak dapat dikembalikan!</p>
                     </div>
                     <div class="modal-footer">
@@ -225,56 +234,69 @@
     </div>
 @endsection
 
-@push('js')
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 @push('css')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 @endpush
-<script>
-    $(document).ready(function() {
-        // Filter session
-        $('#session_filter').change(function() {
-            const sessionId = $(this).val();
 
-            if (sessionId === 'all') {
-                $('#table-peserta tbody tr').show();
-            } else {
-                $('#table-peserta tbody tr').hide();
-                $(`#table-peserta tbody tr[data-sesi="${sessionId}"]`).show();
-            }
+@push('js')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            var table = $('#table-peserta').DataTable({
+                responsive: true,
+                stateSave: true
+            });
+
+            // Filter session - will reload the page with new parameter
+            $('#session_filter').change(function() {
+                const sessionId = $(this).val();
+                const url = new URL(window.location.href);
+
+                if (sessionId === 'all') {
+                    url.searchParams.delete('sesi_id');
+                } else {
+                    url.searchParams.set('sesi_id', sessionId);
+                }
+
+                // Reload the page with new filter
+                window.location.href = url.toString();
+            });
+
+            // Edit button click
+            $(document).on('click', '.edit-peserta', function() {
+                const id = $(this).data('id');
+                const pesertaId = $(this).data('peserta-id');
+                const pesertaNama = $(this).data('nama');
+                const url = "{{ route('pendaftaran.update', ':id') }}".replace(':id', id);
+
+                $('#editForm').attr('action', url);
+                $('#edit_peserta_nama').val(pesertaNama);
+                $('#edit_peserta_id').val(pesertaId);
+                $('#edit_sesi_id').val($(this).data('sesi'));
+                $('#edit_status').val($(this).data('status'));
+
+                $('#editModal').modal('show');
+            });
+
+            // Delete button click
+            $(document).on('click', '.delete-peserta', function() {
+                const id = $(this).data('id');
+                const url = "{{ route('pendaftaran.destroy', ':id') }}".replace(':id', id);
+
+                $('#deleteForm').attr('action', url);
+                $('#delete_nama').text($(this).data('nama'));
+
+                $('#deleteModal').modal('show');
+            });
+
+            // Show create modal
+            $('#btnCreate').click(function() {
+                $('#createModal').modal('show');
+            });
         });
-
-        // Edit button click
-        $('.edit-peserta').click(function() {
-            const id = $(this).data('id');
-            const pesertaId = $(this).data('peserta-id');
-            const pesertaNama = $(this).data('nama');
-            const url = "{{ route('pendaftaran.update', ':id') }}".replace(':id', id);
-
-            $('#editForm').attr('action', url);
-            $('#edit_peserta_nama').val(pesertaNama);
-            $('#edit_peserta_id').val(pesertaId);
-            $('#edit_sesi_id').val($(this).data('sesi'));
-            $('#edit_status').val($(this).data('status'));
-
-            $('#editModal').modal('show');
-        });
-
-        // Delete button click
-        $('.delete-peserta').click(function() {
-            const id = $(this).data('id');
-            const url = "{{ route('pendaftaran.destroy', ':id') }}".replace(':id', id);
-
-            $('#deleteForm').attr('action', url);
-            $('#delete_nama').text($(this).data('nama'));
-
-            $('#deleteModal').modal('show');
-        });
-
-        // Show create modal
-        $('#btnCreate').click(function() {
-            $('#createModal').modal('show');
-        });
-    });
-</script>
+    </script>
 @endpush
