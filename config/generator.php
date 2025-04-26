@@ -150,9 +150,25 @@ return [
             'menus' => [
                 [
                     'title' => 'Pendaftaran Seminar',
-                    'icon' => '<i class="bi bi-person-check"></i>', // Ganti icon di sini
+                    'icon' => '<i class="bi bi-person-check"></i>',
                     'route' => '/pendaftaran',
                     'permission' => 'pendaftaran view',
+                    'permissions' => [],
+                    'submenus' => []
+                ]
+            ]
+        ],
+        [
+            'header' => 'Scan QR Code',
+            'permissions' => [
+                'scan view'
+            ],
+            'menus' => [
+                [
+                    'title' => 'Scan QR Code',
+                    'icon' => '<i class="bi bi-qr-code-scan"></i>',
+                    'route' => '/scan',
+                    'permission' => 'scan view',
                     'permissions' => [],
                     'submenus' => []
                 ]
@@ -199,6 +215,6 @@ return [
                     ]
                 ]
             ]
-        ]
+        ],
     ]
 ];

@@ -53,7 +53,7 @@
                                 </table>
                             </div>
 
-                            <a href="{{ route('peserta.index') }}" class="btn btn-secondary">{{ __('Back') }}</a>
+                            <a href="{{ route('peserta.index') }}" class="btn btn-secondary">{{ __('Kembali') }}</a>
                         </div>
                     </div>
                 </div>

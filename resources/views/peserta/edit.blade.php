@@ -38,7 +38,7 @@
 
                                 @include('peserta.include.form')
 
-                                <a href="{{ route('peserta.index') }}" class="btn btn-secondary">{{ __('Back') }}</a>
+                                <a href="{{ route('peserta.index') }}" class="btn btn-secondary">{{ __('Kembali') }}</a>
 
                                 <button type="submit" class="btn btn-primary">{{ __('Update') }}</button>
                             </form>

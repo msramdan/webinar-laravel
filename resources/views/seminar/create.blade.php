@@ -39,7 +39,7 @@
 
                                 @include('seminar.include.form')
 
-                                <a href="{{ route('seminar.index') }}" class="btn btn-secondary">{{ __('Back') }}</a>
+                                <a href="{{ route('seminar.index') }}" class="btn btn-secondary">{{ __('Kembali') }}</a>
 
                                 <button type="submit" class="btn btn-primary">{{ __('Save') }}</button>
                             </form>

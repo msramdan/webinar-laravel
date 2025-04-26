@@ -25,6 +25,8 @@ Route::middleware(['auth', 'web'])->group(function () {
     Route::resource('peserta', App\Http\Controllers\PesertaController::class);
     Route::resource('seminar', App\Http\Controllers\SeminarController::class);
     Route::resource('pendaftaran', App\Http\Controllers\PendaftaranController::class)->only(['index']);
+    Route::resource('scan', App\Http\Controllers\ScanController::class)->only(['index','show']);
+
     Route::prefix('pendaftaran')->controller(PendaftaranController::class)->group(function () {
         Route::get('/peserta-sesi/{id}', 'pesertaSesi')->name('pendaftaran.peserta.sesi');
         Route::post('/', 'store')->name('pendaftaran.store');
@@ -74,7 +76,6 @@ Route::middleware(['auth', 'web'])->group(function () {
             Route::put('/{id}', 'update')->name('sesi.update');
             Route::delete('/{id}', 'destroy')->name('sesi.destroy');
         });
-
-
     });
 });
+

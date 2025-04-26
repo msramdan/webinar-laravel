@@ -213,5 +213,6 @@ return [
         ['group' => 'sesi', 'access' => ['sesi view', 'sesi create', 'sesi edit', 'sesi delete']],
         ['group' => 'backup databases', 'access' => ['backup database view']],
         ['group' => 'pendaftaran', 'access' => ['pendaftaran view', 'review pendaftaran']],
+        ['group' => 'scan', 'access' => ['scan view']],
     ],
 ];
