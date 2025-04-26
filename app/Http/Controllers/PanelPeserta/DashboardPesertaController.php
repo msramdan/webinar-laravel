@@ -99,28 +99,39 @@ class DashboardPesertaController extends Controller
         $seminar = DB::table('seminar')->where('id', $id)->first();
 
         if (!$seminar) {
-            // Handle case where seminar is not found
             return redirect()->route('panel-peserta.semuaSeminar')->with('error', 'Seminar not found.');
         }
 
-        // Retrieve all sessions for the seminar using the query builder
+        // Retrieve all sessions for the seminar
         $sesi = DB::table('sesi_seminar')
             ->leftJoin('pendaftaran', function ($join) {
                 $join->on('sesi_seminar.id', '=', 'pendaftaran.sesi_id')
                     ->where('pendaftaran.status', '=', 'Approved');
             })
             ->select(
-                'sesi_seminar.*',
-                DB::raw('sesi_seminar.kuota - COUNT(pendaftaran.id) as sisa_kuota'), // Hitung sisa kuota
-                DB::raw('COUNT(pendaftaran.id) as filled_kuota') // Kalau mau tahu juga berapa yang sudah isi
+                'sesi_seminar.id',
+                'sesi_seminar.seminar_id',
+                'sesi_seminar.nama_sesi',
+                'sesi_seminar.mulai_sesi',
+                'sesi_seminar.selesai_sesi',
+                'sesi_seminar.kuota',
+                DB::raw('sesi_seminar.kuota - COUNT(pendaftaran.id) as sisa_kuota'),
+                DB::raw('COUNT(pendaftaran.id) as filled_kuota')
             )
             ->where('sesi_seminar.seminar_id', $id)
-            ->groupBy('sesi_seminar.id')
+            ->groupBy(
+                'sesi_seminar.id',
+                'sesi_seminar.seminar_id',
+                'sesi_seminar.nama_sesi',
+                'sesi_seminar.mulai_sesi',
+                'sesi_seminar.selesai_sesi',
+                'sesi_seminar.kuota'
+            )
             ->get();
 
-        // Pass seminar data and its sessions to the view
         return view('panel-peserta.lihat_sesi', compact('seminar', 'sesi'));
     }
+
 
     public function register(Request $request)
     {
