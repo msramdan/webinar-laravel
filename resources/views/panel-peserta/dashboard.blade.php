@@ -1,15 +1,16 @@
-@extends('panel-peserta.layouts.app')
-
-@section('title', 'Dashboard Peserta')
-
+@extends('panel-peserta.layouts.master')
+@section('title', 'Data kategori')
 @section('content')
-<div class="card">
-    <div class="card-header">Dashboard Peserta</div>
-    <div class="card-body">
-        <h4>Selamat datang, {{ Auth::guard('panel-peserta')->user()->nama }}!</h4>
-        <p>Email: {{ Auth::guard('panel-peserta')->user()->email }}</p>
-        <p>No. Telepon: {{ Auth::guard('panel-peserta')->user()->no_telepon }}</p>
-        <p>Alamat: {{ Auth::guard('panel-peserta')->user()->alamat }}</p>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
 @endsection
