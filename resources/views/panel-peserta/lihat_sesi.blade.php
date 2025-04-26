@@ -10,6 +10,12 @@
                         <h6 class="m-0 font-weight-bold text-primary">Sesi Seminar: {{ $seminar->nama_seminar }}</h6>
                     </div>
                     <div class="card-body">
+                        <div class="mb-3">
+                            <a href="{{ url('/panel-peserta/semua-seminar') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Kembali
+                            </a>
+                        </div>
+
                         <div class="table-responsive">
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
@@ -70,45 +76,46 @@
         });
 
         $(document).on('click', '.register-btn', function() {
-    // Retrieve sesi_id from the button's data attributes
-    var sesi_id = $(this).data('sesi-id');
+            var sesi_id = $(this).data('sesi-id');
 
-    // Show SweetAlert confirmation
-    Swal.fire({
-        title: 'Apakah Anda yakin?',
-        text: "Anda akan mendaftar untuk sesi ini.",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Daftar',
-        cancelButtonText: 'Batal',
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Send the registration request using POST method
-            $.ajax({
-                url: '{{ route('panel-peserta.register') }}', // Simplified URL
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    sesi_id: sesi_id  // Only send sesi_id
-                },
-                success: function(response) {
-                    Swal.fire(
-                        'Pendaftaran Berhasil!',
-                        'Menunggu konfirmasi dari admin.',
-                        'success'
-                    );
-                },
-                error: function(xhr, status, error) {
-                    Swal.fire(
-                        'Terjadi kesalahan!',
-                        'Silakan coba lagi.',
-                        'error'
-                    );
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Anda akan mendaftar untuk sesi ini.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Daftar',
+                cancelButtonText: 'Batal',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '{{ route('panel-peserta.register') }}',
+                        method: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            sesi_id: sesi_id
+                        },
+                        success: function(response) {
+                            Swal.fire(
+                                'Pendaftaran Berhasil!',
+                                response.message, // pakai message dari server
+                                'success'
+                            );
+                        },
+                        error: function(xhr, status, error) {
+                            // Ambil error message dari response JSON
+                            var errorMessage = xhr.responseJSON?.error ||
+                                'Terjadi kesalahan. Silakan coba lagi.';
+
+                            Swal.fire(
+                                'Gagal Mendaftar!',
+                                errorMessage, // tampilkan error spesifik
+                                'error'
+                            );
+                        }
+                    });
                 }
             });
-        }
-    });
-});
+        });
     </script>
 @endpush

@@ -124,16 +124,67 @@ class DashboardPesertaController extends Controller
 
     public function register(Request $request)
     {
-        // Validate the incoming request
+        // Validate incoming request
         $request->validate([
-            'sesi_id' => 'required|exists:sesi_seminar,id', // Only validate sesi_id
+            'sesi_id' => 'required|exists:sesi_seminar,id',
         ]);
 
-        // Register the participant for the session
+        $pesertaId = Auth::guard('panel-peserta')->user()->id;
+
+        // Get session info
+        $sessionData = DB::table('sesi_seminar')
+            ->where('id', $request->sesi_id)
+            ->first(['seminar_id', 'kuota']);
+
+        if (!$sessionData) {
+            return response()->json(['error' => 'Sesi tidak ditemukan'], 404);
+        }
+
+        // Check existing registrations in the seminar
+        $existingRegistrations = DB::table('pendaftaran')
+            ->join('sesi_seminar', 'pendaftaran.sesi_id', '=', 'sesi_seminar.id')
+            ->where('pendaftaran.peserta_id', $pesertaId)
+            ->where('sesi_seminar.seminar_id', $sessionData->seminar_id)
+            ->select('pendaftaran.status', 'pendaftaran.sesi_id', 'sesi_seminar.nama_sesi')
+            ->get();
+
+        // Rule 1: If any Approved → reject
+        $approvedRegistration = $existingRegistrations->firstWhere('status', 'Approved');
+        if ($approvedRegistration) {
+            return response()->json([
+                'error' => 'Anda sudah memiliki pendaftaran yang di-APPROVE di sesi "' . $approvedRegistration->nama_sesi . '".'
+            ], 400);
+        }
+
+        // Rule 2: If any Waiting → reject
+        $waitingRegistration = $existingRegistrations->firstWhere('status', 'Waiting');
+        if ($waitingRegistration) {
+            return response()->json([
+                'error' => 'Anda sudah memiliki pendaftaran yang masih WAITING di sesi "' . $waitingRegistration->nama_sesi . '".'
+            ], 400);
+        }
+        // Rule 3: Already registered in same session → reject
+        $alreadyRegisteredInSession = $existingRegistrations->contains('sesi_id', $request->sesi_id);
+
+        if ($alreadyRegisteredInSession) {
+            return response()->json(['error' => 'Anda sudah terdaftar di sesi ini.'], 400);
+        }
+
+        // Rule 4: (Kuota) if intended to be Approved now
+        $approvedCount = DB::table('pendaftaran')
+            ->where('sesi_id', $request->sesi_id)
+            ->where('status', 'Approved')
+            ->count();
+
+        if ($approvedCount >= $sessionData->kuota) {
+            return response()->json(['error' => 'Kuota sesi sudah penuh.'], 400);
+        }
+
+        // Insert registration
         DB::table('pendaftaran')->insert([
             'sesi_id' => $request->sesi_id,
-            'peserta_id' => Auth::guard('panel-peserta')->user()->id,
-            'status' => 'Waiting',
+            'peserta_id' => $pesertaId,
+            'status' => 'Waiting', // Always set Waiting during registration
             'tanggal_pengajuan' => now(),
             'created_at' => now(),
             'updated_at' => now(),
