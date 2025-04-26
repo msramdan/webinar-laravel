@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PanelPeserta\AuthController;
 use App\Http\Controllers\PanelPeserta\DashboardPesertaController;
 use App\Http\Controllers\PembicaraController;
@@ -38,7 +39,7 @@ Route::prefix('panel-peserta')->group(function () {
 });
 
 Route::middleware(['auth', 'web'])->group(function () {
-    Route::get('/dashboard', fn() => view('dashboard'));
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', App\Http\Controllers\ProfileController::class)->name('profile');
 
     Route::resource('users', App\Http\Controllers\UserController::class);

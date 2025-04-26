@@ -34,8 +34,7 @@
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $session->nama_sesi }}</td>
-                                            <td>{{ $session->kuota }} - {{ $session->kuota - $session->filled_kuota }} spots
-                                                left</td>
+                                            <td>{{ $session->kuota }} - {{ $session->kuota - $session->filled_kuota }} Sisa Kuota</td>
                                             <td>{{ $session->harga_tiket }}</td>
                                             <td><a href="{{ asset('path/to/lampiran/' . $session->lampiran) }}"
                                                     target="_blank">Download</a></td>
