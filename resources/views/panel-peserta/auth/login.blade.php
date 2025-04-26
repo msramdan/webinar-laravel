@@ -1,6 +1,10 @@
 @extends('panel-peserta.layouts.auth')
 @section('title', 'Login')
 @section('content')
+<div class="text-center">
+    <h1 class="h4 text-gray-900 mb-4">Selamat Datang Kembali!</h1>
+</div>
+
     <form method="POST" action="{{ route('panel-peserta.login') }}">
         @csrf
 
