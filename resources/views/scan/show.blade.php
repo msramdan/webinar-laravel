@@ -190,7 +190,9 @@
                     });
 
                     scanner.addListener('scan', function(content) {
-                        processQR(content);
+                        if (scanner._active !== false) {
+                            processQR(content);
+                        }
                     });
 
                     Instascan.Camera.getCameras().then(function(cameras) {
@@ -235,7 +237,7 @@
                             Swal.fire({
                                 title: 'Absen Berhasil!',
                                 html: `<div style="font-size:24px">Peserta: <strong>${response.peserta}</strong></div>
-                       <div style="font-size:18px;margin-top:10px">Waktu: ${new Date().toLocaleString()}</div>`,
+           <div style="font-size:18px;margin-top:10px">Waktu: ${new Date().toLocaleString()}</div>`,
                                 icon: 'success',
                                 confirmButtonText: 'OK',
                                 customClass: {
@@ -248,11 +250,11 @@
                                 '<span class="text-success"><i class="bi bi-check-circle"></i> Berhasil</span>'
                             );
                             $('#result-content').html(`
-                    <div class="alert alert-success">
-                        <h4>${response.peserta}</h4>
-                        <p class="mb-0" style="font-size:18px">Absen berhasil direkam pada: ${new Date().toLocaleString()}</p>
-                    </div>
-                `);
+        <div class="alert alert-success">
+            <h4>${response.peserta}</h4>
+            <p class="mb-0" style="font-size:18px">Absen berhasil direkam pada: ${new Date().toLocaleString()}</p>
+        </div>
+    `);
                         } else {
                             Swal.fire({
                                 title: 'Gagal',
@@ -264,11 +266,11 @@
                                 '<span class="text-danger"><i class="bi bi-exclamation-circle"></i> Gagal</span>'
                             );
                             $('#result-content').html(`
-                    <div class="alert alert-danger">
-                        <h4>${response.pesan}</h4>
-                        <p class="mb-0" style="font-size:18px">Silahkan coba lagi atau hubungi panitia</p>
-                    </div>
-                `);
+        <div class="alert alert-danger">
+            <h4>${response.pesan}</h4>
+            <p class="mb-0" style="font-size:18px">Silahkan coba lagi atau hubungi panitia</p>
+        </div>
+    `);
                         }
 
                         $('#result-container').show();
@@ -289,19 +291,23 @@
                             '<span class="text-danger"><i class="bi bi-exclamation-circle"></i> Error</span>'
                         );
                         $('#result-content').html(`
-                <div class="alert alert-danger">
-                    <h4>${errorMsg}</h4>
-                </div>
-            `);
+    <div class="alert alert-danger">
+        <h4>${errorMsg}</h4>
+    </div>
+`);
                         $('#result-container').show();
                     },
                     complete: function() {
                         $('#toggle-scanner').prop('disabled', false).html(
-                            '<i class="bi bi-camera"></i> Scan Lagi');
+                            '<i class="bi bi-camera"></i> Scanner Aktif');
+
+                        // Tidak menghentikan scanner, hanya menonaktifkan sementara
                         if (scanner) {
-                            scanner.stop();
-                            scanner = null;
-                            videoElem.srcObject = null;
+                            // Nonaktifkan scanner sementara selama 2 detik
+                            scanner._active = false;
+                            setTimeout(() => {
+                                scanner._active = true;
+                            }, 2000);
                         }
                     }
                 });
