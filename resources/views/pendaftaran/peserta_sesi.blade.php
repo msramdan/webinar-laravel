@@ -28,14 +28,250 @@
         </div>
 
         <section class="section">
+            <x-alert></x-alert>
+
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h4>Filter Peserta</h4>
+                                    <div class="form-group">
+                                        <label for="session_filter">Sesi Seminar</label>
+                                        <select class="form-select" id="session_filter">
+                                            <option value="all">Semua Sesi</option>
+                                            @foreach($sessions as $session)
+                                                <option value="{{ $session->id }}">{{ $session->nama_sesi }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-8 text-end">
+                                    <button class="btn btn-primary" id="btnCreate">
+                                        <i class="fas fa-plus"></i> Tambah Pendaftaran
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                         <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="table-peserta">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Nama Peserta</th>
+                                            <th>Email</th>
+                                            <th>No Telepon</th>
+                                            <th>Sesi</th>
+                                            <th>Status</th>
+                                            <th>Tanggal Pendaftaran</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($participants as $key => $participant)
+                                        <tr data-sesi="{{ $participant->sesi_id }}">
+                                            <td>{{ $key + 1 }}</td>
+                                            <td>{{ $participant->nama }}</td>
+                                            <td>{{ $participant->email }}</td>
+                                            <td>{{ $participant->no_telepon }}</td>
+                                            <td>{{ $participant->nama_sesi }}</td>
+                                            <td>
+                                                <span class="badge bg-{{ $participant->status == 'Approved' ? 'success' : ($participant->status == 'Rejected' ? 'danger' : 'warning') }}">
+                                                    {{ $participant->status }}
+                                                </span>
+                                            </td>
+                                            <td>{{ \Carbon\Carbon::parse($participant->tanggal_pengajuan)->format('d/m/Y H:i') }}</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary edit-peserta"
+                                                    data-id="{{ $participant->pendaftaran_id }}"
+                                                    data-peserta-id="{{ $participant->id }}"
+                                                    data-nama="{{ $participant->nama }}"
+                                                    data-sesi="{{ $participant->sesi_id }}"
+                                                    data-status="{{ $participant->status }}">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-danger delete-peserta"
+                                                    data-id="{{ $participant->pendaftaran_id }}"
+                                                    data-nama="{{ $participant->nama }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
     </div>
+
+    <!-- Modal Create -->
+    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModalLabel">Tambah Pendaftaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="createForm" action="{{ route('pendaftaran.store') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="seminar_id" value="{{ $id }}">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="peserta_id">Peserta</label>
+                            <select class="form-select" id="peserta_id" name="peserta_id" required>
+                                <option value="">Pilih Peserta</option>
+                                @foreach($allPeserta as $peserta)
+                                    <option value="{{ $peserta->id }}">{{ $peserta->nama }} ({{ $peserta->email }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sesi_id">Sesi Seminar</label>
+                            <select class="form-select" id="sesi_id" name="sesi_id" required>
+                                @foreach($sessions as $session)
+                                    <option value="{{ $session->id }}">{{ $session->nama_sesi }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="Waiting">Waiting</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edit -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Pendaftaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editForm" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Peserta</label>
+                            <input type="text" class="form-control" id="edit_peserta_nama" readonly>
+                            <input type="hidden" id="edit_peserta_id" name="peserta_id">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_sesi_id">Sesi Seminar</label>
+                            <select class="form-select" id="edit_sesi_id" name="sesi_id" required>
+                                @foreach($sessions as $session)
+                                    <option value="{{ $session->id }}">{{ $session->nama_sesi }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_status">Status</label>
+                            <select class="form-select" id="edit_status" name="status" required>
+                                <option value="Waiting">Waiting</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Delete -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Pendaftaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="deleteForm" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <div class="modal-body">
+                        <p>Apakah Anda yakin ingin menghapus pendaftaran untuk peserta <strong id="delete_nama"></strong>?</p>
+                        <p class="text-danger">Data yang dihapus tidak dapat dikembalikan!</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-danger">Hapus</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
+
+@push('js')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Filter session
+        $('#session_filter').change(function() {
+            const sessionId = $(this).val();
+
+            if (sessionId === 'all') {
+                $('#table-peserta tbody tr').show();
+            } else {
+                $('#table-peserta tbody tr').hide();
+                $(`#table-peserta tbody tr[data-sesi="${sessionId}"]`).show();
+            }
+        });
+
+        // Edit button click
+        $('.edit-peserta').click(function() {
+            const id = $(this).data('id');
+            const pesertaId = $(this).data('peserta-id');
+            const pesertaNama = $(this).data('nama');
+            const url = "{{ route('pendaftaran.update', ':id') }}".replace(':id', id);
+
+            $('#editForm').attr('action', url);
+            $('#edit_peserta_nama').val(pesertaNama);
+            $('#edit_peserta_id').val(pesertaId);
+            $('#edit_sesi_id').val($(this).data('sesi'));
+            $('#edit_status').val($(this).data('status'));
+
+            $('#editModal').modal('show');
+        });
+
+        // Delete button click
+        $('.delete-peserta').click(function() {
+            const id = $(this).data('id');
+            const url = "{{ route('pendaftaran.destroy', ':id') }}".replace(':id', id);
+
+            $('#deleteForm').attr('action', url);
+            $('#delete_nama').text($(this).data('nama'));
+
+            $('#deleteModal').modal('show');
+        });
+
+        // Show create modal
+        $('#btnCreate').click(function() {
+            $('#createModal').modal('show');
+        });
+    });
+</script>
+@endpush
