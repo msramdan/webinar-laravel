@@ -3,7 +3,6 @@
 @section('title', __('Dashboard'))
 
 @section('content')
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.12.0/datatables.min.css" />
     <style>
         .heading-with-logo {
             display: flex;
@@ -138,7 +137,7 @@
                             <div class="card-body" style="min-height: 300px; max-height: 440px; overflow-y: hidden;">
                                 <div class="gauge-container">
                                     <div class="gauge-header">
-                                        <div class="gauge-title">Grafik Perbandingan Peserta Absen & Tidak Absen</div>
+                                        <div class="gauge-title">Persentase kehadiran Peserta Seminar</div>
                                     </div>
                                     <figure class="highcharts-figure">
                                         <div id="container"></div>
