@@ -27,11 +27,16 @@
                         <div class="card-header">
                             <div class="d-flex justify-content-between">
                                 <h4 class="card-title">Daftar Sponsor</h4>
-                                @can('sponsor create')
-                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#sponsorModal">
-                                        <i class="fas fa-plus"></i> Tambah Sponsor
-                                    </button>
-                                @endcan
+                                <div class="col-md-6 text-end">
+                                    @can('sponsor create')
+                                        <a href="{{ route('seminar.index') }}" class="btn btn-secondary me-2">
+                                            <i class="fas fa-arrow-left"></i> Kembali
+                                        </a>
+                                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#sponsorModal">
+                                            <i class="fas fa-plus"></i> Tambah Sponsor
+                                        </button>
+                                    @endcan
+                                </div>
                             </div>
                         </div>
                         <div class="card-body">

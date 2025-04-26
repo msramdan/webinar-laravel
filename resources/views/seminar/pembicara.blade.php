@@ -27,11 +27,16 @@
                         <div class="card-header">
                             <div class="d-flex justify-content-between">
                                 <h4 class="card-title">Daftar Pembicara</h4>
-                                @can('pembicara create')
-                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pembicaraModal">
-                                        <i class="fas fa-plus"></i> Tambah Pembicara
-                                    </button>
-                                @endcan
+                                <div class="col-md-6 text-end">
+                                    @can('pembicara create')
+                                        <a href="{{ route('seminar.index') }}" class="btn btn-secondary me-2">
+                                            <i class="fas fa-arrow-left"></i> Kembali
+                                        </a>
+                                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pembicaraModal">
+                                            <i class="fas fa-plus"></i> Tambah Pembicara
+                                        </button>
+                                    @endcan
+                                </div>
                             </div>
                         </div>
                         <div class="card-body">

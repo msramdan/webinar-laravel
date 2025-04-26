@@ -27,11 +27,16 @@
                         <div class="card-header">
                             <div class="d-flex justify-content-between">
                                 <h4 class="card-title">Daftar Sesi Seminar</h4>
-                                @can('sesi create')
-                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#sesiModal">
-                                        <i class="fas fa-plus"></i> Tambah Sesi
-                                    </button>
-                                @endcan
+                                <div class="col-md-6 text-end">
+                                    @can('sesi create')
+                                        <a href="{{ route('seminar.index') }}" class="btn btn-secondary me-2">
+                                            <i class="fas fa-arrow-left"></i> Kembali
+                                        </a>
+                                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#sesiModal">
+                                            <i class="fas fa-plus"></i> Tambah Sesi
+                                        </button>
+                                    @endcan
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -194,7 +199,7 @@
                         name: 'link_gmeet',
                         render: function(data) {
                             return data ? `<a href="${data}" target="_blank">Join Meeting</a>` :
-                            '-';
+                                '-';
                         }
                     },
                     {
