@@ -90,12 +90,12 @@
                                                     data-nama="{{ $participant->nama }}"
                                                     data-sesi="{{ $participant->sesi_id }}"
                                                     data-status="{{ $participant->status }}">
-                                                    <i class="fas fa-edit"></i>
+                                                    <i class="fa fa-pencil-alt"></i>
                                                 </button>
                                                 <button class="btn btn-sm btn-danger delete-peserta"
                                                     data-id="{{ $participant->pendaftaran_id }}"
                                                     data-nama="{{ $participant->nama }}">
-                                                    <i class="fas fa-trash"></i>
+                                                    <i class="ace-icon fa fa-trash-alt"></i>
                                                 </button>
                                             </td>
                                         </tr>
@@ -227,6 +227,9 @@
 
 @push('js')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@push('css')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+@endpush
 <script>
     $(document).ready(function() {
         // Filter session
