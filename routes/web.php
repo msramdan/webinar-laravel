@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SeminarController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -19,4 +20,9 @@ Route::middleware(['auth', 'web'])->group(function () {
     Route::get('/backup/download', [App\Http\Controllers\BackupDatabaseController::class, 'downloadBackup'])->name('backup.download');
     Route::resource('peserta', App\Http\Controllers\PesertaController::class);
     Route::resource('seminar', App\Http\Controllers\SeminarController::class);
+
+
+    Route::prefix('seminar')->controller(SeminarController::class)->group(function () {
+        Route::get('/pembicara/show/{id}', 'showpembicara')->name('seminar.pembicara.show');
+    });
 });

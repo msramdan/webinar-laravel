@@ -14,7 +14,7 @@ class Seminar extends Model
      *
      * @var string
      */
-    protected $table = 'seminars';
+    protected $table = 'seminar';
 
     /**
      * The attributes that are mass assignable.
@@ -32,6 +32,6 @@ class Seminar extends Model
     {
         return ['nama_seminar' => 'string', 'deskripsi' => 'string', 'lampiran' => 'string', 'created_at' => 'datetime:Y-m-d H:i:s', 'updated_at' => 'datetime:Y-m-d H:i:s'];
     }
-    
+
 
 }

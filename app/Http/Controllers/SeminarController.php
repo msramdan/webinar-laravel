@@ -9,13 +9,13 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Generators\Services\ImageService;
 use Illuminate\Http\{JsonResponse, RedirectResponse};
 use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
+use Illuminate\Support\Facades\DB;
 
 class SeminarController extends Controller implements HasMiddleware
 {
     public function __construct(public ImageService $imageService, public string $lampiranPath = '')
     {
         $this->lampiranPath = storage_path('app/public/uploads/lampirans/');
-
     }
 
     /**
@@ -24,13 +24,11 @@ class SeminarController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            // 'auth',
-
-            // TODO: uncomment this code if you are using spatie permission
-            // new Middleware('permission:seminar view', only: ['index', 'show']),
-            // new Middleware('permission:seminar create', only: ['create', 'store']),
-            // new Middleware('permission:seminar edit', only: ['edit', 'update']),
-            // new Middleware('permission:seminar delete', only: ['destroy']),
+            'auth',
+            new Middleware('permission:seminar view', only: ['index', 'show']),
+            new Middleware('permission:seminar create', only: ['create', 'store']),
+            new Middleware('permission:seminar edit', only: ['edit', 'update']),
+            new Middleware('permission:seminar delete', only: ['destroy']),
         ];
     }
 
@@ -43,9 +41,45 @@ class SeminarController extends Controller implements HasMiddleware
             $seminars = Seminar::query();
 
             return Datatables::of($seminars)
-                ->addColumn('deskripsi', function($row) {
-                        return str($row->deskripsi)->limit(100);
-                    })
+
+                ->addColumn('pembicara', function ($row) {
+                    $editPembicara = route('seminar.pembicara.show', ['id' => $row->id]);
+                    return '
+                    <div class="text-center">
+                        <a href="' . $editPembicara . '" class="btn btn-sm btn-warning"
+                           style="width: 140px; background: #ffc107; border-color: #ffc107;"
+                           data-toggle="tooltip" data-placement="left" title="Atur Responden">
+                             Atur Pembicara
+                        </a>
+                    </div>';
+                })
+
+                ->addColumn('sponsor', function ($row) {
+                    $editSponsor = route('seminar.pembicara.show', ['id' => $row->id]);
+                    return '
+                    <div class="text-center">
+                        <a href="' . $editSponsor . '" class="btn btn-sm btn-warning"
+                           style="width: 140px; background: #ffc107; border-color: #ffc107;"
+                           data-toggle="tooltip" data-placement="left" title="Atur Responden">
+                             Atur Sponsor
+                        </a>
+                    </div>';
+                })
+
+                ->addColumn('sesi', function ($row) {
+                    $editSesi = route('seminar.pembicara.show', ['id' => $row->id]);
+                    return '
+                    <div class="text-center">
+                        <a href="' . $editSesi . '" class="btn btn-sm btn-warning"
+                           style="width: 140px; background: #ffc107; border-color: #ffc107;"
+                           data-toggle="tooltip" data-placement="left" title="Atur Responden">
+                             Atur Sesi
+                        </a>
+                    </div>';
+                })
+                ->addColumn('deskripsi', function ($row) {
+                    return str($row->deskripsi)->limit(100);
+                })
 
                 ->addColumn('lampiran', function ($seminar) {
                     if (!$seminar->lampiran) return 'https://via.placeholder.com/350?text=No+Image+Avaiable';
@@ -54,6 +88,7 @@ class SeminarController extends Controller implements HasMiddleware
                 })
 
                 ->addColumn('action', 'seminar.include.action')
+                ->rawColumns(['pembicara', 'sponsor', 'sesi', 'action'])
                 ->toJson();
         }
 
@@ -87,7 +122,28 @@ class SeminarController extends Controller implements HasMiddleware
      */
     public function show(Seminar $seminar): View
     {
-        return view('seminar.show', compact('seminar'));
+        $seminarData = DB::table('seminar')
+            ->where('id', $seminar->id)
+            ->first();
+
+        $sponsors = DB::table('sponsor')
+            ->where('seminar_id', $seminar->id)
+            ->get();
+
+        $pembicaras = DB::table('pembicara')
+            ->where('seminar_id', $seminar->id)
+            ->get();
+
+        $sesiSeminars = DB::table('sesi_seminar')
+            ->where('seminar_id', $seminar->id)
+            ->get();
+
+        return view('seminar.show', [
+            'seminar' => $seminarData,
+            'sponsors' => $sponsors,
+            'pembicaras' => $pembicaras,
+            'sesiSeminars' => $sesiSeminars,
+        ]);
     }
 
     /**
@@ -128,5 +184,25 @@ class SeminarController extends Controller implements HasMiddleware
         } catch (\Exception $e) {
             return to_route('seminar.index')->with('error', __("The seminar can't be deleted because it's related to another table."));
         }
+    }
+
+
+    public function showpembicara($id): View|JsonResponse
+    {
+        if (request()->ajax()) {
+            $pembicara = DB::table('pembicara')
+                ->where('seminar_id', $id)
+                ->get();
+
+            return DataTables::of($pembicara)
+                ->addIndexColumn()
+                ->toJson();
+        }
+
+        $seminar = DB::table('seminar')
+            ->where('id', $id)
+            ->first();
+
+        return view('seminar.pembicara', compact('seminar'));
     }
 }
