@@ -30,6 +30,11 @@ Route::prefix('panel-peserta')->group(function () {
             ->name('panel-peserta.semuaSeminar');
         Route::get('/{id}/peserta-download-qrcode', [DashboardPesertaController::class, 'downloadQRCode'])
             ->name('pendaftaran.qrcode.download.peserta');
+        Route::get('/seminar/{id}/sesi', [DashboardPesertaController::class, 'lihatSesi'])
+            ->name('panel-peserta.lihatSesi');
+        // Add this route for registration
+        Route::post('/seminar/register', [DashboardPesertaController::class, 'register'])
+        ->name('panel-peserta.register');
     });
 });
 
