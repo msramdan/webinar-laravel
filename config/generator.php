@@ -110,57 +110,57 @@ return [
      * This code below always changes when you use a generator, and maybe you must format the code.
      */
     "sidebars" => [
-    [
-        'header' => 'Utilities',
-        'permissions' => [
-            'user view',
-            'role & permission view',
-            'backup database view'
+        [
+            'header' => 'Peserta',
+            'permissions' => [
+                'peserta view'
+            ],
+            'menus' => [
+                [
+                    'title' => 'Peserta',
+                    'icon' => '<i class="bi bi-people"></i>',
+                    'route' => '/peserta',
+                    'permission' => 'peserta view',
+                    'permissions' => [],
+                    'submenus' => []
+                ]
+            ]
         ],
-        'menus' => [
-            [
-                'title' => 'Utilities',
-                'icon' => '<i class="bi bi-gear-fill"></i>',
-                'route' => [
-                    'users*',
-                    'roles*',
-                    'backup-database*'
-                ],
-                'permissions' => [
-                    'user view',
-                    'role & permission view',
-                    'backup database view'
-                ],
-                'submenus' => [
-                    [
-                        'title' => 'User',
-                        'route' => '/users',
-                        'permission' => 'user view'
+        [
+            'header' => 'Utilities',
+            'permissions' => [
+                'user view',
+                'role & permission view',
+                'backup database view'
+            ],
+            'menus' => [
+                [
+                    'title' => 'Utilities',
+                    'icon' => '<i class="bi bi-gear-fill"></i>',
+                    'route' => [
+                        'users*',
+                        'roles*',
+                        'backup-database*'
                     ],
-                    [
-                        'title' => 'Roles & permissions',
-                        'route' => '/roles',
-                        'permission' => 'role & permission view'
+                    'permissions' => [
+                        'user view',
+                        'role & permission view',
+                        'backup database view'
+                    ],
+                    'submenus' => [
+                        [
+                            'title' => 'User',
+                            'route' => '/users',
+                            'permission' => 'user view'
+                        ],
+                        [
+                            'title' => 'Roles & permissions',
+                            'route' => '/roles',
+                            'permission' => 'role & permission view'
+                        ]
                     ]
                 ]
             ]
         ]
-    ],
-    [
-        'header' => 'Pesertas',
-        'permissions' => [
-            'pesertum view'
-        ],
-        'menus' => [
-            [
-                'title' => 'Pesertas',
-                'icon' => '<i class="bi bi-people"></i>',
-                'route' => '/pesertas',
-                'permission' => 'pesertum view',
-                'permissions' => [],
-                'submenus' => []
-            ]
-        ]
     ]
-]
 ];

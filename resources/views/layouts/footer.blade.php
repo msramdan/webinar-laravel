@@ -1,14 +1,8 @@
 <footer>
     <div class="footer clearfix mb-0 text-muted">
         <div class="float-start">
-            <p>{{ date('Y') }} &copy; Generator by
-                <a href="https://github.com/Evdigi-INA" target="_blank">Evdigi-INA</a> &
-               <a href="https://github.com/Zzzul" target="_blank">Mohammad Zulfahmi</a>
-            </p>
-        </div>
-        <div class="float-end">
-            <p>Mazer Template by
-                <a href="https://github.com/zuramai/mazer" target="_blank">Ahmad Saugi</a>
+            <p>{{ date('Y') }} &copy; Created by
+                <a href="https://tecanusa.com/" target="_blank">Teknologi Cipta Aplikasi Nusantara (TECANUSA)</a>
             </p>
         </div>
     </div>

@@ -1,20 +1,20 @@
 @extends('layouts.app')
 
-@section('title', __('Pesertas'))
+@section('title', __('Peserta'))
 
 @section('content')
     <div class="page-heading">
         <div class="page-title">
             <div class="row">
                 <div class="col-12 col-md-8 order-md-1 order-last">
-                    <h3>{{ __('Pesertas') }}</h3>
+                    <h3>{{ __('Peserta') }}</h3>
                     <p class="text-subtitle text-muted">
-                        {{ __('Below is a list of all pesertas.') }}
+                        {{ __('Below is a list of all peserta.') }}
                     </p>
                 </div>
                 <x-breadcrumb>
                     <li class="breadcrumb-item"><a href="/">{{ __('Dashboard') }}</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ __('Pesertas') }}</li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ __('Peserta') }}</li>
                 </x-breadcrumb>
             </div>
         </div>
@@ -22,11 +22,11 @@
         <section class="section">
             <x-alert></x-alert>
 
-                @can('pesertum create')
+                @can('peserta create')
                     <div class="d-flex justify-content-end">
-                        <a href="{{ route('pesertas.create') }}" class="btn btn-primary mb-3">
+                        <a href="{{ route('peserta.create') }}" class="btn btn-primary mb-3">
                             <i class="fas fa-plus"></i>
-                            {{ __('Create a new pesertum') }}
+                            {{ __('Create a new Peserta') }}
                         </a>
                     </div>
                 @endcan
@@ -43,9 +43,6 @@
 											<th>{{ __('No Telepon') }}</th>
 											<th>{{ __('Email') }}</th>
 											<th>{{ __('Alamat') }}</th>
-											
-                                            <th>{{ __('Created At') }}</th>
-                                            <th>{{ __('Updated At') }}</th>
                                             <th>{{ __('Action') }}</th>
                                         </tr>
                                     </thead>
@@ -71,7 +68,7 @@
         $('#data-table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('pesertas.index') }}",
+            ajax: "{{ route('peserta.index') }}",
             columns: [
                 {
                     data: 'nama',
@@ -88,15 +85,6 @@
 				{
                     data: 'alamat',
                     name: 'alamat',
-                },
-				
-                {
-                    data: 'created_at',
-                    name: 'created_at'
-                },
-                {
-                    data: 'updated_at',
-                    name: 'updated_at'
                 },
                 {
                     data: 'action',

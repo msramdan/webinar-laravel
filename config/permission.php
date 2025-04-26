@@ -206,11 +206,6 @@ return [
                 'role & permission delete',
             ]
         ],
-        [
-            'group' => 'tests',
-            'access' => [
-                'test view',
-            ]
-        ],
-  ['group' => 'pesertas', 'access' => ['pesertum view', 'pesertum create', 'pesertum edit', 'pesertum delete']], 
-		],];
+        ['group' => 'peserta', 'access' => ['peserta view', 'peserta create', 'peserta edit', 'peserta delete']],
+    ],
+];

@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', __('Detail of Pesertas'))
+@section('title', __('Detail of Peserta'))
 
 @section('content')
     <div class="page-heading">
         <div class="page-title">
             <div class="row">
                 <div class="col-12 col-md-8 order-md-1 order-last">
-                    <h3>{{ __('Pesertas') }}</h3>
+                    <h3>{{ __('Peserta') }}</h3>
                     <p class="text-subtitle text-muted">
-                        {{ __('Detail of pesertum.') }}
+                        {{ __('Detail of peserta.') }}
                     </p>
                 </div>
 
@@ -18,7 +18,7 @@
                         <a href="/">{{ __('Dashboard') }}</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('pesertas.index') }}">{{ __('Pesertas') }}</a>
+                        <a href="{{ route('peserta.index') }}">{{ __('Peserta') }}</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">
                         {{ __('Detail') }}
@@ -36,33 +36,33 @@
                                 <table class="table table-hover table-striped">
                                     <tr>
                     <td class="fw-bold">{{ __('Nama') }}</td>
-                    <td>{{ $pesertum->nama }}</td>
+                    <td>{{ $peserta->nama }}</td>
                 </tr>
 <tr>
                     <td class="fw-bold">{{ __('No Telepon') }}</td>
-                    <td>{{ $pesertum->no_telepon }}</td>
+                    <td>{{ $peserta->no_telepon }}</td>
                 </tr>
 <tr>
                     <td class="fw-bold">{{ __('Email') }}</td>
-                    <td>{{ $pesertum->email }}</td>
+                    <td>{{ $peserta->email }}</td>
                 </tr>
 <tr>
                     <td class="fw-bold">{{ __('Alamat') }}</td>
-                    <td>{{ $pesertum->alamat }}</td>
+                    <td>{{ $peserta->alamat }}</td>
                 </tr>
 
                                     <tr>
                                         <td class="fw-bold">{{ __('Created at') }}</td>
-                                        <td>{{ $pesertum->created_at->format('Y-m-d H:i:s') }}</td>
+                                        <td>{{ $peserta->created_at->format('Y-m-d H:i:s') }}</td>
                                     </tr>
                                     <tr>
                                         <td class="fw-bold">{{ __('Updated at') }}</td>
-                                        <td>{{ $pesertum->updated_at->format('Y-m-d H:i:s') }}</td>
+                                        <td>{{ $peserta->updated_at->format('Y-m-d H:i:s') }}</td>
                                     </tr>
                                 </table>
                             </div>
 
-                            <a href="{{ route('pesertas.index') }}" class="btn btn-secondary">{{ __('Back') }}</a>
+                            <a href="{{ route('peserta.index') }}" class="btn btn-secondary">{{ __('Back') }}</a>
                         </div>
                     </div>
                 </div>

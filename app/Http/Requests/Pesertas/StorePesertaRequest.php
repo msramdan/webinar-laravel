@@ -4,7 +4,7 @@ namespace App\Http\Requests\Pesertas;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StorePesertumRequest extends FormRequest
+class StorePesertaRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class StorePesertumRequest extends FormRequest
         return [
             'nama' => 'required|string|max:255',
 			'no_telepon' => 'required|max:15',
-			'email' => 'required|email|unique:pesertas,email',
+			'email' => 'required|email|unique:peserta,email',
 			'alamat' => 'required|string',
 			'password' => 'required|confirmed',
         ];

@@ -30,4 +30,4 @@ Route::middleware(['auth', 'web'])->group(function () {
     Route::resource('roles', App\Http\Controllers\RoleAndPermissionController::class);
 });
 
-Route::resource('pesertas', App\Http\Controllers\PesertumController::class)->middleware('auth');
+Route::resource('peserta', App\Http\Controllers\PesertaController::class)->middleware('auth');
