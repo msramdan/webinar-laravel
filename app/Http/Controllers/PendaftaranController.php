@@ -98,16 +98,16 @@ class PendaftaranController extends Controller implements HasMiddleware
             'status' => 'required|in:Waiting,Approved,Rejected'
         ]);
 
-        // Get seminar ID from selected session
-        $seminarId = DB::table('sesi_seminar')
+        // Get seminar ID and session data from selected session
+        $sessionData = DB::table('sesi_seminar')
             ->where('id', $request->sesi_id)
-            ->value('seminar_id');
+            ->first(['seminar_id', 'kuota']);
 
         // Check existing registrations in this seminar
         $existingRegistrations = DB::table('pendaftaran')
             ->join('sesi_seminar', 'pendaftaran.sesi_id', '=', 'sesi_seminar.id')
             ->where('pendaftaran.peserta_id', $request->peserta_id)
-            ->where('sesi_seminar.seminar_id', $seminarId)
+            ->where('sesi_seminar.seminar_id', $sessionData->seminar_id)
             ->select('pendaftaran.status')
             ->get();
 
@@ -132,6 +132,19 @@ class PendaftaranController extends Controller implements HasMiddleware
         if ($existingInSession) {
             return redirect()->back()
                 ->with('error', 'Peserta sudah terdaftar pada sesi ini');
+        }
+
+        // NEW RULE: Check quota if status is Approved
+        if ($request->status == 'Approved') {
+            $approvedCount = DB::table('pendaftaran')
+                ->where('sesi_id', $request->sesi_id)
+                ->where('status', 'Approved')
+                ->count();
+
+            if ($approvedCount >= $sessionData->kuota) {
+                return redirect()->back()
+                    ->with('error', 'Kuota untuk sesi ini sudah penuh');
+            }
         }
 
         // Generate token only if status is Approved
@@ -162,15 +175,16 @@ class PendaftaranController extends Controller implements HasMiddleware
             ->where('id', $id)
             ->first();
 
-        $seminarId = DB::table('sesi_seminar')
+        // Get session data including quota
+        $sessionData = DB::table('sesi_seminar')
             ->where('id', $request->sesi_id)
-            ->value('seminar_id');
+            ->first(['seminar_id', 'kuota']);
 
         // Untuk update, kita perlu mengecek registrasi lain SELAIN yang sedang diupdate
         $otherRegistrations = DB::table('pendaftaran')
             ->join('sesi_seminar', 'pendaftaran.sesi_id', '=', 'sesi_seminar.id')
             ->where('pendaftaran.peserta_id', $currentRegistration->peserta_id)
-            ->where('sesi_seminar.seminar_id', $seminarId)
+            ->where('sesi_seminar.seminar_id', $sessionData->seminar_id)
             ->where('pendaftaran.id', '!=', $id)
             ->select('pendaftaran.status')
             ->get();
@@ -185,6 +199,19 @@ class PendaftaranController extends Controller implements HasMiddleware
         if ($request->status == 'Waiting' && $otherRegistrations->contains('status', 'Waiting')) {
             return redirect()->back()
                 ->with('error', 'Sudah ada status WAITING di sesi lain');
+        }
+
+        // NEW RULE: Check quota if status is being changed to Approved
+        if ($request->status == 'Approved' && $currentRegistration->status != 'Approved') {
+            $approvedCount = DB::table('pendaftaran')
+                ->where('sesi_id', $request->sesi_id)
+                ->where('status', 'Approved')
+                ->count();
+
+            if ($approvedCount >= $sessionData->kuota) {
+                return redirect()->back()
+                    ->with('error', 'Kuota untuk sesi ini sudah penuh');
+            }
         }
 
         // Generate token or set to null based on status
