@@ -10,12 +10,14 @@ use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use BaconQrCode\Writer;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 
 class PendaftaranController extends Controller implements HasMiddleware
 {
-    /**
-     * Get the middleware that should be assigned to the controller.
-     */
+
     public static function middleware(): array
     {
         return [
@@ -234,5 +236,76 @@ class PendaftaranController extends Controller implements HasMiddleware
         DB::table('pendaftaran')->where('id', $id)->delete();
 
         return redirect()->back()->with('success', 'Pendaftaran berhasil dihapus');
+    }
+
+    public function generateQRCode($id)
+    {
+        $registration = DB::table('pendaftaran')
+            ->join('peserta', 'pendaftaran.peserta_id', '=', 'peserta.id')
+            ->join('sesi_seminar', 'pendaftaran.sesi_id', '=', 'sesi_seminar.id')
+            ->where('pendaftaran.id', $id)
+            ->select('pendaftaran.*', 'peserta.nama as peserta_nama', 'sesi_seminar.nama_sesi')
+            ->first();
+
+        if (!$registration || $registration->status != 'Approved') {
+            return response()->json(['error' => 'QR Code hanya tersedia untuk peserta dengan status Approved'], 404);
+        }
+
+        $qrData = json_encode([
+            'sesi_id' => $registration->sesi_id,
+            'peserta_id' => $registration->peserta_id,
+            'token' => $registration->token,
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        $renderer = new ImageRenderer(
+            new RendererStyle(300),
+            new SvgImageBackEnd()
+        );
+
+        $writer = new Writer($renderer);
+        $svg = $writer->writeString($qrData);
+
+        return response()->json([
+            'svg' => $svg,
+            'nama' => $registration->peserta_nama,
+            'sesi' => $registration->nama_sesi,
+            'download_url' => route('pendaftaran.qrcode.download', ['id' => $id])
+        ]);
+    }
+
+    public function downloadQRCode($id)
+    {
+        $registration = DB::table('pendaftaran')
+            ->join('peserta', 'pendaftaran.peserta_id', '=', 'peserta.id')
+            ->where('pendaftaran.id', $id)
+            ->select('pendaftaran.*', 'peserta.nama as peserta_nama')
+            ->first();
+
+        if (!$registration || $registration->status != 'Approved') {
+            abort(404, 'QR Code hanya tersedia untuk peserta dengan status Approved');
+        }
+
+        $qrData = json_encode([
+            'sesi_id' => $registration->sesi_id,
+            'peserta_id' => $registration->peserta_id,
+            'token' => $registration->token,
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        $renderer = new ImageRenderer(
+            new RendererStyle(300),
+            new SvgImageBackEnd()
+        );
+
+        $writer = new Writer($renderer);
+        $svg = $writer->writeString($qrData);
+
+        $filename = 'QR-' . Str::slug($registration->peserta_nama) . '-' . $registration->id . '.svg';
+
+        return response($svg, 200, [
+            'Content-Type' => 'image/svg+xml',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+        ]);
     }
 }

@@ -26,15 +26,13 @@ Route::middleware(['auth', 'web'])->group(function () {
     Route::resource('seminar', App\Http\Controllers\SeminarController::class);
     Route::resource('pendaftaran', App\Http\Controllers\PendaftaranController::class)->only(['index']);
     Route::prefix('pendaftaran')->controller(PendaftaranController::class)->group(function () {
-        // Grouped routes using controller method
         Route::get('/peserta-sesi/{id}', 'pesertaSesi')->name('pendaftaran.peserta.sesi');
-
-        // Other CRUD routes
         Route::post('/', 'store')->name('pendaftaran.store');
         Route::put('/{id}', 'update')->name('pendaftaran.update');
         Route::delete('/{id}', 'destroy')->name('pendaftaran.destroy');
+        Route::get('/{id}/generate-qrcode', 'generateQRCode')->name('pendaftaran.qrcode.generate');
+        Route::get('/{id}/download-qrcode', 'downloadQRCode')->name('pendaftaran.qrcode.download');
     });
-
 
     Route::prefix('seminar')->group(function () {
         Route::controller(SeminarController::class)->group(function () {
@@ -76,5 +74,7 @@ Route::middleware(['auth', 'web'])->group(function () {
             Route::put('/{id}', 'update')->name('sesi.update');
             Route::delete('/{id}', 'destroy')->name('sesi.destroy');
         });
+
+
     });
 });

@@ -3,6 +3,30 @@
 @section('title', __('Daftar Peserta Seminar'))
 
 @section('content')
+    <style>
+        /* Add to your CSS */
+        #qrCodeContainer {
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #qrCodeContainer svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        #qrParticipantName {
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        #qrSessionName {
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+    </style>
     <div class="page-heading">
         <div class="page-title">
             <div class="row">
@@ -40,9 +64,11 @@
                                     <div class="form-group">
                                         <label for="session_filter">Sesi Seminar</label>
                                         <select class="form-select" id="session_filter">
-                                            <option value="all" {{ $selectedSession == 'all' ? 'selected' : '' }}>Semua Sesi</option>
-                                            @foreach($sessions as $session)
-                                                <option value="{{ $session->id }}" {{ $selectedSession == $session->id ? 'selected' : '' }}>
+                                            <option value="all" {{ $selectedSession == 'all' ? 'selected' : '' }}>Semua
+                                                Sesi</option>
+                                            @foreach ($sessions as $session)
+                                                <option value="{{ $session->id }}"
+                                                    {{ $selectedSession == $session->id ? 'selected' : '' }}>
                                                     {{ $session->nama_sesi }}
                                                 </option>
                                             @endforeach
@@ -104,6 +130,14 @@
                                                         data-nama="{{ $participant->nama }}">
                                                         <i class="ace-icon fa fa-trash-alt"></i>
                                                     </button>
+                                                    @if ($participant->status == 'Approved')
+                                                        <button class="btn btn-sm btn-success show-qrcode"
+                                                            data-id="{{ $participant->pendaftaran_id }}"
+                                                            data-url="{{ route('pendaftaran.qrcode.generate', ['id' => $participant->pendaftaran_id]) }}"
+                                                            title="Lihat QR Code">
+                                                            <i class="fas fa-qrcode"></i>
+                                                        </button>
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -115,6 +149,29 @@
                 </div>
             </div>
         </section>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div class="modal fade" id="qrCodeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">QR Code Peserta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div id="qrCodeContainer"></div>
+                    <h5 id="qrParticipantName" class="mt-3"></h5>
+                    <p id="qrSessionName" class="text-muted"></p>
+                </div>
+                <div class="modal-footer">
+                    <a id="qrDownloadBtn" class="btn btn-primary" download>
+                        <i class="fas fa-download"></i> Download
+                    </a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Modal Create -->
@@ -296,6 +353,27 @@
             // Show create modal
             $('#btnCreate').click(function() {
                 $('#createModal').modal('show');
+            });
+        });
+    </script>
+    <script>
+        $(document).on('click', '.show-qrcode', function() {
+            const url = $(this).data('url');
+            const modal = $('#qrCodeModal');
+
+            $('#qrCodeContainer').html(
+                '<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x"></i></div>');
+            $('#qrParticipantName').text('');
+            $('#qrSessionName').text('');
+
+            $.get(url, function(response) {
+                $('#qrCodeContainer').html(response.svg);
+                $('#qrParticipantName').text(response.nama);
+                $('#qrSessionName').text(response.sesi);
+                $('#qrDownloadBtn').attr('href', response.download_url);
+                modal.modal('show');
+            }).fail(function() {
+                alert('Gagal memuat QR Code');
             });
         });
     </script>
