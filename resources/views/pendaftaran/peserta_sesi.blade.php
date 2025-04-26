@@ -39,7 +39,7 @@
 
                 <x-breadcrumb>
                     <li class="breadcrumb-item">
-                        <a href="/">{{ __('Dashboard') }}</a>
+                        <a href="/dashboard">{{ __('Dashboard') }}</a>
                     </li>
                     <li class="breadcrumb-item">
                         <a href="{{ route('pendaftaran.index') }}">{{ __('Pendaftaran') }}</a>

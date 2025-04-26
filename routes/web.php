@@ -9,14 +9,14 @@ use App\Http\Controllers\SeminarController;
 use App\Http\Controllers\SesiSeminarController;
 use App\Http\Controllers\SponsorController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Redirect;
 
-
-
+Route::get('/', fn () => Redirect::route('panel-peserta.login'));
+Route::redirect('/panel-peserta', '/panel-peserta/login');
 Route::prefix('panel-peserta')->group(function () {
     Route::middleware('guest:panel-peserta')->group(function () {
         Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('panel-peserta.register');
         Route::post('/register', [AuthController::class, 'register']);
-
         Route::get('/login', [AuthController::class, 'showLoginForm'])->name('panel-peserta.login');
         Route::post('/login', [AuthController::class, 'login']);
     });
@@ -37,16 +37,8 @@ Route::prefix('panel-peserta')->group(function () {
     });
 });
 
-
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Route::middleware(['auth', 'web'])->group(function () {
-    Route::get('/', fn() => view('dashboard'));
     Route::get('/dashboard', fn() => view('dashboard'));
-
     Route::get('/profile', App\Http\Controllers\ProfileController::class)->name('profile');
 
     Route::resource('users', App\Http\Controllers\UserController::class);

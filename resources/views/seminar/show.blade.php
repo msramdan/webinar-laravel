@@ -11,7 +11,7 @@
                 <p class="text-subtitle text-muted">Detail lengkap seminar</p>
             </div>
             <x-breadcrumb>
-                <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('seminar.index') }}">Seminar</a></li>
                 <li class="breadcrumb-item active">Detail</li>
             </x-breadcrumb>
