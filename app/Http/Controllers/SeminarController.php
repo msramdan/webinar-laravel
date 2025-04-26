@@ -41,7 +41,7 @@ class SeminarController extends Controller implements HasMiddleware
             $seminars = Seminar::query();
 
             return Datatables::of($seminars)
-
+                ->addIndexColumn()
                 ->addColumn('pembicara', function ($row) {
                     $editPembicara = route('seminar.pembicara.show', ['id' => $row->id]);
                     return '

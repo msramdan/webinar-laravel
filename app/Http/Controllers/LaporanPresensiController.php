@@ -30,6 +30,7 @@ class LaporanPresensiController extends Controller implements HasMiddleware
                 ->groupBy('seminar.id', 'seminar.nama_seminar');
 
             return DataTables::of($seminars)
+                ->addIndexColumn()
                 ->addColumn('jumlah_sesi', function ($row) {
                     return $row->jumlah_sesi . ' Sesi';
                 })

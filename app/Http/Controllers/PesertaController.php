@@ -34,6 +34,7 @@ class PesertaController extends Controller implements HasMiddleware
             $pesertas = Peserta::query();
 
             return DataTables::of($pesertas)
+                ->addIndexColumn()
                 ->addColumn('alamat', function ($row) {
                     return str($row->alamat)->limit(100);
                 })

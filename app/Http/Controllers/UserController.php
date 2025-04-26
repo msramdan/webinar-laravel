@@ -18,7 +18,6 @@ class UserController extends Controller implements HasMiddleware
     public function __construct(public ImageService $imageService, public string $avatarPath = '')
     {
         $this->avatarPath = storage_path('app/public/uploads/avatars/');
-
     }
 
     /**
@@ -43,6 +42,7 @@ class UserController extends Controller implements HasMiddleware
             $users = User::with('roles:id,name');
 
             return Datatables::of($users)
+                ->addIndexColumn()
                 ->addColumn('action', 'users.include.action')
                 ->addColumn('role', fn($row) => $row->getRoleNames()->toArray() !== [] ? $row->getRoleNames()[0] : '-')
                 ->addColumn('avatar', function ($user) {

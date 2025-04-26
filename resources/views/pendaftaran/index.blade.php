@@ -39,9 +39,10 @@
                                 <table class="table table-striped" id="data-table" width="100%">
                                     <thead>
                                         <tr>
+                                            <th>#</th>
                                             <th>{{ __('Nama Seminar') }}</th>
 											<th>{{ __('Jumlah Sesi') }}</th>
-                                            <th>{{ __('Action') }}</th>s
+                                            <th>{{ __('Action') }}</th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -68,6 +69,12 @@
             serverSide: true,
             ajax: "{{ route('pendaftaran.index') }}",
             columns: [
+                {
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                    orderable: false,
+                    searchable: false
+                },
                 {
                     data: 'nama_seminar',
                     name: 'nama_seminar'

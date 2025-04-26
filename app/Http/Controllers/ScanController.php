@@ -38,6 +38,7 @@ class ScanController extends Controller implements HasMiddleware
                 );
 
             return DataTables::of($scans)
+                ->addIndexColumn()
                 ->addColumn('action', 'scan.include.action')
                 ->toJson();
         }

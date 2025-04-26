@@ -39,6 +39,7 @@
                                 <table class="table table-striped" id="data-table" width="100%">
                                     <thead>
                                         <tr>
+                                            <th>#</th>
                                             <th>{{ __('Nama Seminar') }}</th>
                                             <th>{{ __('Deskripsi') }}</th>
                                             <th>{{ __('Lampiran') }}</th>
@@ -76,7 +77,14 @@
             processing: true,
             serverSide: true,
             ajax: "{{ route('seminar.index') }}",
-            columns: [{
+            columns: [
+                {
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                    orderable: false,
+                    searchable: false
+                },
+                {
                     data: 'nama_seminar',
                     name: 'nama_seminar',
                 },

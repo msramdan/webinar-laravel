@@ -39,6 +39,7 @@
                                 <table class="table table-striped" id="data-table" width="100%">
                                     <thead>
                                         <tr>
+                                            <th>#</th>
                                             <th>{{ __('Nama') }}</th>
 											<th>{{ __('No Telepon') }}</th>
 											<th>{{ __('Email') }}</th>
@@ -70,6 +71,12 @@
             serverSide: true,
             ajax: "{{ route('peserta.index') }}",
             columns: [
+                {
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                    orderable: false,
+                    searchable: false
+                },
                 {
                     data: 'nama',
                     name: 'nama',
