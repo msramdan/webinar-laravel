@@ -159,6 +159,22 @@ return [
             ]
         ],
         [
+            'header' => 'Laporan Presensi',
+            'permissions' => [
+                'laporan presensi view'
+            ],
+            'menus' => [
+                [
+                    'title' => 'Laporan Presensi',
+                    'icon' => '<i class="fas fa-chalkboard-teacher"></i>',  // Mengganti icon dengan Font Awesome
+                    'route' => '/laporan',
+                    'permission' => 'laporan presensi view',
+                    'permissions' => [],
+                    'submenus' => []
+                ]
+            ]
+        ],
+        [
             'header' => 'Scan QR Code',
             'permissions' => [
                 'scan view'

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LaporanPresensiController;
 use App\Http\Controllers\PanelPeserta\AuthController;
 use App\Http\Controllers\PanelPeserta\DashboardPesertaController;
 use App\Http\Controllers\PembicaraController;
@@ -12,7 +13,7 @@ use App\Http\Controllers\SponsorController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Redirect;
 
-Route::get('/', fn () => Redirect::route('panel-peserta.login'));
+Route::get('/', fn() => Redirect::route('panel-peserta.login'));
 Route::redirect('/panel-peserta', '/panel-peserta/login');
 Route::prefix('panel-peserta')->group(function () {
     Route::middleware('guest:panel-peserta')->group(function () {
@@ -34,7 +35,7 @@ Route::prefix('panel-peserta')->group(function () {
         Route::get('/seminar/{id}/sesi', [DashboardPesertaController::class, 'lihatSesi'])
             ->name('panel-peserta.lihatSesi');
         Route::post('/seminar/register', [DashboardPesertaController::class, 'register'])
-        ->name('panel-peserta.register.seminar');
+            ->name('panel-peserta.register.seminar');
     });
 });
 
@@ -60,6 +61,11 @@ Route::middleware(['auth', 'web'])->group(function () {
         Route::delete('/{id}', 'destroy')->name('pendaftaran.destroy');
         Route::get('/{id}/generate-qrcode', 'generateQRCode')->name('pendaftaran.qrcode.generate');
         Route::get('/{id}/download-qrcode', 'downloadQRCode')->name('pendaftaran.qrcode.download');
+    });
+
+
+    Route::prefix('laporan')->controller(LaporanPresensiController::class)->group(function () {
+        Route::get('/', 'index')->name('laporan.index');
     });
 
     Route::prefix('seminar')->group(function () {
