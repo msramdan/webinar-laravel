@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\PembicaraController;
 use App\Http\Controllers\SeminarController;
+use App\Http\Controllers\SesiSeminarController;
 use App\Http\Controllers\SponsorController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +33,11 @@ Route::middleware(['auth', 'web'])->group(function () {
             Route::get('/{id}/sponsor', 'showSponsor')->name('seminar.sponsor.show');
         });
 
+        Route::controller(SeminarController::class)->group(function () {
+            Route::get('/{id}/sesi-seminat', 'showSesi')->name('seminar.sesi.show');
+        });
+
+
         Route::prefix('{seminar}/pembicara')->controller(PembicaraController::class)->group(function () {
             Route::get('/', 'index')->name('pembicara.index');
             Route::get('/data', 'getData')->name('pembicara.data');
@@ -48,6 +54,15 @@ Route::middleware(['auth', 'web'])->group(function () {
             Route::get('/{id}', 'show')->name('sponsor.show');
             Route::put('/{id}', 'update')->name('sponsor.update');
             Route::delete('/{id}', 'destroy')->name('sponsor.destroy');
+        });
+
+        Route::prefix('{seminar}/sesi')->controller(SesiSeminarController::class)->group(function () {
+            Route::get('/', 'index')->name('sesi.index');
+            Route::get('/data', 'getData')->name('sesi.data');
+            Route::post('/', 'store')->name('sesi.store');
+            Route::get('/{id}', 'show')->name('sesi.show');
+            Route::put('/{id}', 'update')->name('sesi.update');
+            Route::delete('/{id}', 'destroy')->name('sesi.destroy');
         });
     });
 });

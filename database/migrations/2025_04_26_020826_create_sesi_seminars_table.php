@@ -10,6 +10,7 @@ class CreateSesiSeminarsTable extends Migration
     {
         Schema::create('sesi_seminar', function (Blueprint $table) {
             $table->id();
+            $table->string('nama_sesi');
             $table->integer('kuota');
             $table->decimal('harga_tiket', 12, 2)->default(0);
             $table->string('lampiran')->nullable();

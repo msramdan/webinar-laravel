@@ -39,11 +39,11 @@ class SeminarSeeder extends Seeder
 
         DB::table('sesi_seminar')->insert([
             'kuota' => 100,
+            'nama_sesi' => 'Sesi 1',
             'harga_tiket' => 100000,
             'lampiran' => 'jadwal1.pdf',
             'tanggal_pelaksanaan' => Carbon::now()->addDays(10),
             'link_gmeet' => 'https://meet.google.com/abc-defg-hij',
-            'is_active' => true,
             'seminar_id' => $seminar1,
             'created_at' => now(),
             'updated_at' => now(),
@@ -78,11 +78,11 @@ class SeminarSeeder extends Seeder
 
         DB::table('sesi_seminar')->insert([
             'kuota' => 80,
+            'nama_sesi' => 'Sesi 1',
             'harga_tiket' => 120000,
             'lampiran' => 'jadwal2.pdf',
             'tanggal_pelaksanaan' => Carbon::now()->addDays(15),
             'link_gmeet' => 'https://meet.google.com/xyz-uvw-123',
-            'is_active' => true,
             'seminar_id' => $seminar2,
             'created_at' => now(),
             'updated_at' => now(),
