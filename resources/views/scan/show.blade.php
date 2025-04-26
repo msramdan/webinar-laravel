@@ -108,6 +108,28 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(78, 84, 200, 0.4);
         }
+
+        .camera-selector {
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .btn-camera {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            border: none;
+            padding: 8px 15px;
+            color: white;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            margin: 0 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-camera.active {
+            background: linear-gradient(135deg, #4e54c8, #8f94fb);
+            box-shadow: 0 4px 15px rgba(78, 84, 200, 0.4);
+        }
     </style>
 @endpush
 
@@ -131,6 +153,18 @@
                         <div class="card-body text-center">
                             <h4 class="card-title">Scan QR Code Peserta</h4>
                             <p class="text-muted">Arahkan kamera ke QR code yang ditampilkan peserta</p>
+
+                            <div class="camera-selector" id="camera-selector">
+                                <p class="mb-2">Pilih Kamera:</p>
+                                <div class="d-flex justify-content-center">
+                                    <button class="btn-camera" data-camera="back">
+                                        <i class="bi bi-camera-video"></i> Kamera Belakang
+                                    </button>
+                                    <button class="btn-camera" data-camera="front">
+                                        <i class="bi bi-camera"></i> Kamera Depan
+                                    </button>
+                                </div>
+                            </div>
 
                             <div class="scanner-container mb-4">
                                 <video id="qr-scanner"></video>
@@ -167,13 +201,14 @@
 @push('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         $(document).ready(function() {
             let scanner = null;
             let videoElem = document.getElementById('qr-scanner');
+            let cameras = [];
+            let currentCameraIndex = 0;
 
             $('#toggle-scanner').click(function() {
                 if (scanner) {
@@ -182,6 +217,7 @@
                     scanner = null;
                     videoElem.srcObject = null;
                     $(this).html('<i class="bi bi-camera"></i> Mulai Scan');
+                    $('#camera-selector').hide();
                 } else {
                     // Start scanner
                     scanner = new Instascan.Scanner({
@@ -195,11 +231,20 @@
                         }
                     });
 
-                    Instascan.Camera.getCameras().then(function(cameras) {
+                    Instascan.Camera.getCameras().then(function(detectedCameras) {
+                        cameras = detectedCameras;
                         if (cameras.length > 0) {
-                            scanner.start(cameras[0]);
-                            $('#toggle-scanner').html(
-                                '<i class="bi bi-stop-circle"></i> Stop Scan');
+                            if (cameras.length > 1) {
+                                // Tampilkan pilihan kamera jika ada lebih dari 1
+                                $('#camera-selector').show();
+                                // Set default camera (belakang)
+                                switchCamera('back');
+                            } else {
+                                // Hanya ada 1 kamera
+                                scanner.start(cameras[0]);
+                                $('#toggle-scanner').html(
+                                    '<i class="bi bi-stop-circle"></i> Stop Scan');
+                            }
                         } else {
                             Swal.fire({
                                 title: 'Kamera Tidak Ditemukan',
@@ -216,6 +261,63 @@
                         });
                     });
                 }
+            });
+
+            // Fungsi untuk mengganti kamera
+            function switchCamera(type) {
+                if (!scanner || cameras.length === 0) return;
+
+                let selectedCamera = null;
+
+                if (type === 'front') {
+                    // Cari kamera depan
+                    selectedCamera = cameras.find(cam => cam.name.toLowerCase().includes('front') ||
+                                                      cam.name.toLowerCase().includes('depan') ||
+                                                      cam.name.toLowerCase().includes('face'));
+                    if (!selectedCamera) {
+                        // Jika tidak ditemukan, gunakan kamera pertama yang bukan back
+                        selectedCamera = cameras.find(cam => !cam.name.toLowerCase().includes('back') &&
+                                                          !cam.name.toLowerCase().includes('belakang'));
+                    }
+                } else {
+                    // Cari kamera belakang
+                    selectedCamera = cameras.find(cam => cam.name.toLowerCase().includes('back') ||
+                                                      cam.name.toLowerCase().includes('belakang') ||
+                                                      cam.name.toLowerCase().includes('rear'));
+                    if (!selectedCamera) {
+                        // Jika tidak ditemukan, gunakan kamera pertama yang bukan front
+                        selectedCamera = cameras.find(cam => !cam.name.toLowerCase().includes('front') &&
+                                                          !cam.name.toLowerCase().includes('depan') &&
+                                                          !cam.name.toLowerCase().includes('face'));
+                    }
+                }
+
+                // Jika masih tidak ditemukan, gunakan kamera pertama
+                if (!selectedCamera && cameras.length > 0) {
+                    selectedCamera = cameras[0];
+                }
+
+                if (selectedCamera) {
+                    scanner.start(selectedCamera).then(() => {
+                        $('#toggle-scanner').html('<i class="bi bi-stop-circle"></i> Stop Scan');
+                        // Update tombol aktif
+                        $('.btn-camera').removeClass('active');
+                        $(`.btn-camera[data-camera="${type}"]`).addClass('active');
+
+                        // Set mirror untuk kamera depan
+                        if (type === 'front') {
+                            videoElem.style.transform = 'scaleX(-1)';
+                        } else {
+                            videoElem.style.transform = 'scaleX(1)';
+                        }
+                    });
+                }
+            }
+
+            // Event handler untuk tombol pilih kamera
+            $(document).on('click', '.btn-camera', function() {
+                const cameraType = $(this).data('camera');
+                switchCamera(cameraType);
             });
 
             function processQR(qrData) {
@@ -299,7 +401,7 @@
                     },
                     complete: function() {
                         $('#toggle-scanner').prop('disabled', false).html(
-                            '<i class="bi bi-camera"></i> Scanner Aktif');
+                            '<i class="bi bi-stop-circle"></i> Stop Scan');
 
                         // Tidak menghentikan scanner, hanya menonaktifkan sementara
                         if (scanner) {
@@ -312,7 +414,6 @@
                     }
                 });
             }
-
         });
     </script>
 
