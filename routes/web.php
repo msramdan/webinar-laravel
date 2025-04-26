@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\PembicaraController;
 use App\Http\Controllers\SeminarController;
+use App\Http\Controllers\SponsorController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -27,15 +28,26 @@ Route::middleware(['auth', 'web'])->group(function () {
             Route::get('/{id}/pembicara', 'showPembicara')->name('seminar.pembicara.show');
         });
 
-        // Routes handled by PembicaraController
+        Route::controller(SeminarController::class)->group(function () {
+            Route::get('/{id}/sponsor', 'showSponsor')->name('seminar.sponsor.show');
+        });
+
         Route::prefix('{seminar}/pembicara')->controller(PembicaraController::class)->group(function () {
-            Route::get('/', 'index')->name('pembicara.index'); // Main view
-            Route::get('/data', 'getData')->name('pembicara.data'); // DataTables data endpoint
+            Route::get('/', 'index')->name('pembicara.index');
+            Route::get('/data', 'getData')->name('pembicara.data');
             Route::post('/', 'store')->name('pembicara.store');
             Route::get('/{id}', 'show')->name('pembicara.show');
             Route::put('/{id}', 'update')->name('pembicara.update');
             Route::delete('/{id}', 'destroy')->name('pembicara.destroy');
         });
-    });
 
+        Route::prefix('{seminar}/sponsor')->controller(SponsorController::class)->group(function () {
+            Route::get('/', 'index')->name('sponsor.index');
+            Route::get('/data', 'getData')->name('sponsor.data');
+            Route::post('/', 'store')->name('sponsor.store');
+            Route::get('/{id}', 'show')->name('sponsor.show');
+            Route::put('/{id}', 'update')->name('sponsor.update');
+            Route::delete('/{id}', 'destroy')->name('sponsor.destroy');
+        });
+    });
 });

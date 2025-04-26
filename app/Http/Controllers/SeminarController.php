@@ -55,7 +55,7 @@ class SeminarController extends Controller implements HasMiddleware
                 })
 
                 ->addColumn('sponsor', function ($row) {
-                    $editSponsor = route('seminar.pembicara.show', ['id' => $row->id]);
+                    $editSponsor = route('seminar.sponsor.show', ['id' => $row->id]);
                     return '
                     <div class="text-center">
                         <a href="' . $editSponsor . '" class="btn btn-sm btn-warning"
@@ -187,7 +187,7 @@ class SeminarController extends Controller implements HasMiddleware
     }
 
 
-    public function showpembicara($id): View|JsonResponse
+    public function showPembicara($id): View|JsonResponse
     {
         if (request()->ajax()) {
             $pembicara = DB::table('pembicara')
@@ -204,5 +204,24 @@ class SeminarController extends Controller implements HasMiddleware
             ->first();
 
         return view('seminar.pembicara', compact('seminar'));
+    }
+
+    public function showSponsor($id): View|JsonResponse
+    {
+        if (request()->ajax()) {
+            $sponsor = DB::table('sponsor')
+                ->where('seminar_id', $id)
+                ->get();
+
+            return DataTables::of($sponsor)
+                ->addIndexColumn()
+                ->toJson();
+        }
+
+        $seminar = DB::table('seminar')
+            ->where('id', $id)
+            ->first();
+
+        return view('seminar.sponsor', compact('seminar'));
     }
 }

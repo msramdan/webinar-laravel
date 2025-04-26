@@ -25,7 +25,7 @@ class PembicaraController extends Controller
         return DataTables::of($pembicara)
             ->addIndexColumn()
             ->addColumn('photo', function ($row) {
-                return $row->photo ? '<img src="' . asset('storage/uploads/pembicara/' . $row->photo) . '" width="150" height="150">' : '<i class="fas fa-user-circle fa-2x"></i>';
+                return $row->photo ? '<img src="' . asset('storage/uploads/pembicara/' . $row->photo) . '" width="80" class="img-thumbnail">' : '<i class="fas fa-user-circle fa-2x"></i>';
             })
             ->addColumn('action', function ($row) {
                 return '
