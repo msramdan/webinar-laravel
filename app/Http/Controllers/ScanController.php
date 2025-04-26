@@ -88,6 +88,27 @@ class ScanController extends Controller implements HasMiddleware
                 ], 400);
             }
 
+            // Ambil data sesi seminar
+            $sesi = DB::table('sesi_seminar')
+                ->where('id', $request->sesi_id)
+                ->select('tanggal_pelaksanaan')
+                ->first();
+
+            if (!$sesi) {
+                return response()->json([
+                    'sukses' => false,
+                    'pesan' => 'Data sesi seminar tidak ditemukan'
+                ], 404);
+            }
+
+            // Validasi waktu absensi
+            if (now()->lt(\Carbon\Carbon::parse($sesi->tanggal_pelaksanaan))) {
+                return response()->json([
+                    'sukses' => false,
+                    'pesan' => 'Absensi belum dibuka. Silakan absen setelah ' . \Carbon\Carbon::parse($sesi->tanggal_pelaksanaan)->format('d-m-Y H:i')
+                ], 400);
+            }
+
             // Cek data pendaftaran
             $pendaftaran = DB::table('pendaftaran')
                 ->where('sesi_id', $qrData['sesi_id'])
@@ -135,7 +156,6 @@ class ScanController extends Controller implements HasMiddleware
                 'pesan' => 'Absen berhasil direkam',
                 'peserta' => $peserta->nama ?? 'Peserta'
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'sukses' => false,
