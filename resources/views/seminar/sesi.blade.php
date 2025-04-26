@@ -33,7 +33,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
+                        <div class="table-responsive p-1">
                             <table class="table table-hover" id="sesi-table">
                                 <thead>
                                     <tr>
