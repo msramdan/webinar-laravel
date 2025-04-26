@@ -68,16 +68,20 @@ class PesertaController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(Peserta $peserta): View
+    public function show($id): View
     {
+        $peserta = Peserta::where('id', $id)->firstOrFail();
+
         return view('peserta.show', compact('peserta'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Peserta $peserta): View
+    public function edit($id): View
     {
+        $peserta = Peserta::findOrFail($id);
+
         return view('peserta.edit', compact('peserta'));
     }
 

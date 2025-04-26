@@ -29,19 +29,18 @@ class ViewComposerServiceProvider extends ServiceProvider
         });
 
 
-		View::composer(['pendaftaran.create', 'pendaftaran.edit'], function ($view) {
+        View::composer(['pendaftaran.create', 'pendaftaran.edit'], function ($view) {
             return $view->with(
                 'sesis',
                 \App\Models\Sesi::select('id')->get()
             );
         });
 
-View::composer(['pendaftaran.create', 'pendaftaran.edit'], function ($view) {
+        View::composer(['pendaftaran.create', 'pendaftaran.edit'], function ($view) {
             return $view->with(
                 'peserta',
-                \App\Models\Pesertum::select('id', 'nama')->get()
+                \App\Models\Peserta::select('id', 'nama')->get()
             );
         });
-
-	}
+    }
 }
