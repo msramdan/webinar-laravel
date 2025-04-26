@@ -40,6 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'panel-peserta' => [
+            'driver' => 'session',
+            'provider' => 'panel-pesertas',
+        ],
     ],
 
     /*
@@ -69,6 +74,11 @@ return [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
+
+        'panel-pesertas' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Peserta::class,
+        ],
     ],
 
     /*

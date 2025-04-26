@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PanelPeserta\AuthController;
 use App\Http\Controllers\PembicaraController;
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\ScanController;
@@ -7,6 +8,29 @@ use App\Http\Controllers\SeminarController;
 use App\Http\Controllers\SesiSeminarController;
 use App\Http\Controllers\SponsorController;
 use Illuminate\Support\Facades\Route;
+
+
+
+Route::prefix('panel-peserta')->group(function () {
+    Route::middleware('guest:panel-peserta')->group(function () {
+        Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('panel-peserta.register');
+        Route::post('/register', [AuthController::class, 'register']);
+
+        Route::get('/login', [AuthController::class, 'showLoginForm'])->name('panel-peserta.login');
+        Route::post('/login', [AuthController::class, 'login']);
+    });
+
+    Route::post('/logout', [AuthController::class, 'logout'])->name('panel-peserta.logout');
+
+    // Route yang membutuhkan auth panel-peserta
+    Route::middleware('auth:panel-peserta')->group(function () {
+        Route::get('/dashboard', function () {
+            return view('panel-peserta.dashboard');
+        })->name('panel-peserta.dashboard');
+    });
+});
+
+
 
 Route::get('/', function () {
     return view('welcome');
