@@ -30,15 +30,27 @@ class SesiSeminarController extends Controller
                 return date('d M Y H:i', strtotime($row->tanggal_pelaksanaan));
             })
             ->addColumn('action', function ($row) {
-                return '
-                    <button class="btn btn-sm btn-warning btn-edit" data-id="'.$row->id.'">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger btn-delete" data-id="'.$row->id.'">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                ';
+                $buttons = '';
+
+                if (auth()->user()->can('sesi edit')) {
+                    $buttons .= '
+                        <button class="btn btn-sm btn-warning btn-edit" data-id="' . $row->id . '">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    ';
+                }
+
+                if (auth()->user()->can('sesi delete')) {
+                    $buttons .= '
+                        <button class="btn btn-sm btn-danger btn-delete" data-id="' . $row->id . '">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    ';
+                }
+
+                return $buttons;
             })
+
             ->rawColumns(['action'])
             ->toJson();
     }

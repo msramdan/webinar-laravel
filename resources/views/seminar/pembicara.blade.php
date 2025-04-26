@@ -27,9 +27,11 @@
                         <div class="card-header">
                             <div class="d-flex justify-content-between">
                                 <h4 class="card-title">Daftar Pembicara</h4>
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pembicaraModal">
-                                    <i class="fas fa-plus"></i> Tambah Pembicara
-                                </button>
+                                @can('pembicara create')
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pembicaraModal">
+                                        <i class="fas fa-plus"></i> Tambah Pembicara
+                                    </button>
+                                @endcan
                             </div>
                         </div>
                         <div class="card-body">

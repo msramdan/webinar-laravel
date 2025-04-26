@@ -27,9 +27,11 @@
                         <div class="card-header">
                             <div class="d-flex justify-content-between">
                                 <h4 class="card-title">Daftar Sponsor</h4>
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#sponsorModal">
-                                    <i class="fas fa-plus"></i> Tambah Sponsor
-                                </button>
+                                @can('sponsor create')
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#sponsorModal">
+                                        <i class="fas fa-plus"></i> Tambah Sponsor
+                                    </button>
+                                @endcan
                             </div>
                         </div>
                         <div class="card-body">
@@ -44,7 +46,6 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- Data will be loaded via AJAX -->
                                     </tbody>
                                 </table>
                             </div>

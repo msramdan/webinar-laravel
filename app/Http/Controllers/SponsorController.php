@@ -25,18 +25,27 @@ class SponsorController extends Controller
             ->addIndexColumn()
             ->addColumn('gambar', function ($row) {
                 return $row->gambar ?
-                    '<img src="'.asset('storage/uploads/sponsor/'.$row->gambar).'" width="80" class="img-thumbnail">' :
+                    '<img src="' . asset('storage/uploads/sponsor/' . $row->gambar) . '" width="80" class="img-thumbnail">' :
                     '<i class="fas fa-image fa-2x"></i>';
             })
             ->addColumn('action', function ($row) {
-                return '
-                    <button class="btn btn-sm btn-warning btn-edit" data-id="'.$row->id.'">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger btn-delete" data-id="'.$row->id.'">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                ';
+                $buttons = '';
+                if (auth()->user()->can('sponsor edit')) {
+                    $buttons .= '
+                        <button class="btn btn-sm btn-warning btn-edit" data-id="' . $row->id . '">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    ';
+                }
+                if (auth()->user()->can('sponsor delete')) {
+                    $buttons .= '
+                        <button class="btn btn-sm btn-danger btn-delete" data-id="' . $row->id . '">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    ';
+                }
+
+                return $buttons;
             })
             ->rawColumns(['gambar', 'action'])
             ->toJson();
@@ -92,7 +101,7 @@ class SponsorController extends Controller
         if ($request->hasFile('gambar')) {
             // Delete old image if exists
             if ($gambarPath) {
-                Storage::disk('public')->delete('uploads/sponsor/'.$gambarPath);
+                Storage::disk('public')->delete('uploads/sponsor/' . $gambarPath);
             }
             $gambarPath = $request->file('gambar')->store('uploads/sponsor', 'public');
             $gambarPath = basename($gambarPath);
@@ -114,7 +123,7 @@ class SponsorController extends Controller
         $sponsor = DB::table('sponsor')->where('id', $id)->first();
 
         if ($sponsor->gambar) {
-            Storage::disk('public')->delete('uploads/sponsor/'.$sponsor->gambar);
+            Storage::disk('public')->delete('uploads/sponsor/' . $sponsor->gambar);
         }
 
         DB::table('sponsor')->where('id', $id)->delete();

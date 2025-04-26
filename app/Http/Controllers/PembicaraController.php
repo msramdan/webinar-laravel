@@ -28,14 +28,24 @@ class PembicaraController extends Controller
                 return $row->photo ? '<img src="' . asset('storage/uploads/pembicara/' . $row->photo) . '" width="80" class="img-thumbnail">' : '<i class="fas fa-user-circle fa-2x"></i>';
             })
             ->addColumn('action', function ($row) {
-                return '
-                    <button class="btn btn-sm btn-warning btn-edit" data-id="' . $row->id . '">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger btn-delete" data-id="' . $row->id . '">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                ';
+                $buttons = '';
+                if (auth()->user()->can('pembicara edit')) {
+                    $buttons .= '
+                        <button class="btn btn-sm btn-warning btn-edit" data-id="' . $row->id . '">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    ';
+                }
+
+                if (auth()->user()->can('pembicara delete')) {
+                    $buttons .= '
+                        <button class="btn btn-sm btn-danger btn-delete" data-id="' . $row->id . '">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    ';
+                }
+
+                return $buttons;
             })
             ->rawColumns(['photo', 'action'])
             ->toJson();

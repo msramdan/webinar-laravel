@@ -23,6 +23,7 @@ Route::middleware(['auth', 'web'])->group(function () {
     Route::get('/backup/download', [App\Http\Controllers\BackupDatabaseController::class, 'downloadBackup'])->name('backup.download');
     Route::resource('peserta', App\Http\Controllers\PesertaController::class);
     Route::resource('seminar', App\Http\Controllers\SeminarController::class);
+    Route::resource('pendaftaran', App\Http\Controllers\PendaftaranController::class)->middleware('auth');
 
     Route::prefix('seminar')->group(function () {
         Route::controller(SeminarController::class)->group(function () {
@@ -66,3 +67,4 @@ Route::middleware(['auth', 'web'])->group(function () {
         });
     });
 });
+

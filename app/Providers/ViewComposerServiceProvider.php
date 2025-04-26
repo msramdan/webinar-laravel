@@ -27,5 +27,21 @@ class ViewComposerServiceProvider extends ServiceProvider
                 Role::select('id', 'name')->get()
             );
         });
-    }
+
+
+		View::composer(['pendaftaran.create', 'pendaftaran.edit'], function ($view) {
+            return $view->with(
+                'sesis',
+                \App\Models\Sesi::select('id')->get()
+            );
+        });
+
+View::composer(['pendaftaran.create', 'pendaftaran.edit'], function ($view) {
+            return $view->with(
+                'peserta',
+                \App\Models\Pesertum::select('id', 'nama')->get()
+            );
+        });
+
+	}
 }

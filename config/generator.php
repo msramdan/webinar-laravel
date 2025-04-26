@@ -134,9 +134,25 @@ return [
             'menus' => [
                 [
                     'title' => 'Seminar',
-                    'icon' => '<i class="bi bi-people"></i>',
+                    'icon' => '<i class="bi bi-journal-bookmark"></i>',
                     'route' => '/seminar',
                     'permission' => 'seminar view',
+                    'permissions' => [],
+                    'submenus' => []
+                ]
+            ]
+        ],
+        [
+            'header' => 'Pendaftaran',
+            'permissions' => [
+                'pendaftaran view'
+            ],
+            'menus' => [
+                [
+                    'title' => 'Pendaftaran Seminar',
+                    'icon' => '<i class="bi bi-person-check"></i>', // Ganti icon di sini
+                    'route' => '/pendaftaran',
+                    'permission' => 'pendaftaran view',
                     'permissions' => [],
                     'submenus' => []
                 ]
