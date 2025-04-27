@@ -99,7 +99,7 @@
                         searchable: false,
                         render: function(data, type, full, meta) {
                             return `<div>
-                            <img src="${data}" alt="Lampiran" style="width:150px" >
+                            <img src="${data}" alt="Lampiran" style="max-width: 100px; height: auto;">
                         </div>`;
                         }
                     },
