@@ -21,9 +21,11 @@ class StoreSeminarRequest extends FormRequest
     {
         return [
             'nama_seminar' => 'required|string|max:250',
-			'deskripsi' => 'required|string',
-			'lampiran' => 'required|image|max:4000',
-			'is_active' => 'required|in:Yes,No',
+            'deskripsi' => 'required|string',
+            'lampiran' => 'required|image|max:4000',
+            'is_active' => 'required|in:Yes,No',
+            'show_sertifikat' => 'required|in:Yes,No',
+            'template_sertifikat' => 'nullable|image|max:4000',
         ];
     }
 }

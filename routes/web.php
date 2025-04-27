@@ -36,6 +36,9 @@ Route::prefix('panel-peserta')->group(function () {
             ->name('panel-peserta.lihatSesi');
         Route::post('/seminar/register', [DashboardPesertaController::class, 'register'])
             ->name('panel-peserta.register.seminar');
+
+        Route::get('/sertifikat/download/{pendaftaranId}', [DashboardPesertaController::class, 'downloadSertifikat'])
+            ->name('panel-peserta.sertifikat.download');
     });
 });
 

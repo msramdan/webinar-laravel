@@ -43,7 +43,9 @@
                                             <th>{{ __('Nama Seminar') }}</th>
                                             <th>{{ __('Deskripsi') }}</th>
                                             <th>{{ __('Lampiran') }}</th>
-                                            <th>{{ __('Is Active') }}</th>
+                                            <th>{{ __('is Active') }}</th>
+                                            <th>{{ __('Tampil Sertifikat') }}</th>
+                                            <th>{{ __('Template Sertifikat') }}</th>
                                             <th>{{ __('Pembicara') }}</th>
                                             <th>{{ __('Sponsor') }}</th>
                                             <th>{{ __('Sesi Seminar') }}</th>
@@ -57,75 +59,104 @@
                 </div>
             </div>
         </section>
-    </div>
-@endsection
+    @endsection
 
-@push('css')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
-        integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.12.0/datatables.min.css" />
-@endpush
+    @push('css')
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+            integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.12.0/datatables.min.css" />
+    @endpush
 
-@push('js')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
-        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.12.0/datatables.min.js"></script>
-    <script>
-        $('#data-table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{ route('seminar.index') }}",
-            columns: [
-                {
-                    data: 'DT_RowIndex',
-                    name: 'DT_RowIndex',
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: 'nama_seminar',
-                    name: 'nama_seminar',
-                },
-                {
-                    data: 'deskripsi',
-                    name: 'deskripsi',
-                },
-                {
-                    data: 'lampiran',
-                    name: 'lampiran',
-                    orderable: false,
-                    searchable: false,
-                    render: function(data, type, full, meta) {
-                        return `<div>
+    @push('js')
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+            integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.12.0/datatables.min.js"></script>
+        <script>
+            $('#data-table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('seminar.index') }}",
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'nama_seminar',
+                        name: 'nama_seminar'
+                    },
+                    {
+                        data: 'deskripsi',
+                        name: 'deskripsi',
+                    },
+                    {
+                        data: 'lampiran',
+                        name: 'lampiran',
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, full, meta) {
+                            return `<div>
                             <img src="${data}" alt="Lampiran" style="width:150px" >
                         </div>`;
+                        }
+                    },
+                    {
+                        data: 'is_active',
+                        name: 'is_active'
+                    },
+                    {
+                        data: 'show_sertifikat',
+                        name: 'show_sertifikat'
+                    },
+                    // === AWAL PERUBAHAN: Tampilkan Preview Template ===
+                    {
+                        data: 'template_sertifikat',
+                        name: 'template_sertifikat',
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, full, meta) {
+                            if (data) {
+                                // Pastikan path '/storage/' benar sesuai link storage Anda
+                                let imageUrl = `/storage/uploads/sertifikat_templates/${data}`;
+                                return `<img src="${imageUrl}" alt="Template" style="max-width: 100px; height: auto;">`;
+                            } else {
+                                return '-'; // Tampilkan '-' jika tidak ada template
+                            }
+                        }
+                    },
+                    // === AKHIR PERUBAHAN ===
+                    {
+                        data: 'pembicara',
+                        name: 'pembicara',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'sponsor',
+                        name: 'sponsor',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'sesi',
+                        name: 'sesi',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
                     }
-                },
-                {
-                    data: 'is_active',
-                    name: 'is_active',
-                },
-                {
-                    data: 'pembicara',
-                    name: 'pembicara',
-                },
-                {
-                    data: 'sponsor',
-                    name: 'sponsor',
-                },
-                {
-                    data: 'sesi',
-                    name: 'sesi',
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false,
-                    searchable: false
-                }
-            ],
-        });
-    </script>
-@endpush
+                ],
+                // rawColumns mungkin perlu diperbarui jika ada HTML baru
+                rawColumns: ['lampiran', 'template_sertifikat', 'pembicara', 'sponsor', 'sesi',
+                    'action'
+                ] // Tambahkan template_sertifikat
+            });
+        </script>
+    @endpush

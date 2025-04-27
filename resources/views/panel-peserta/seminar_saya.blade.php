@@ -3,6 +3,17 @@
 @section('content')
 
     <div class="container-fluid">
+        {{-- Tambahkan ini untuk menampilkan error dari redirect --}}
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        @endif
+        {{-- Akhir tambahan --}}
+
         <div class="row">
             <div class="col-md-12">
                 <div class="card shadow mb-4">
@@ -30,6 +41,7 @@
                                             <td>{{ $item->nama_seminar }}</td>
                                             <td>{{ $item->nama_sesi }}</td>
                                             <td>
+                                                {{-- Status Badge --}}
                                                 @if ($item->status == 'Approved')
                                                     <span class="badge badge-success">Approved</span>
                                                 @elseif($item->status == 'Waiting')
@@ -43,22 +55,47 @@
                                             <td>{{ \Carbon\Carbon::parse($item->tanggal_pelaksanaan)->format('d M Y H:i') }}
                                             </td>
                                             <td>
+                                                {{-- --- MODIFIKASI BAGIAN AKSI --- --}}
                                                 @if ($item->status == 'Approved')
                                                     <div class="btn-group" role="group">
+                                                        {{-- Tombol Join Meeting (jika ada link) --}}
                                                         @if ($item->link_gmeet)
                                                             <a href="{{ $item->link_gmeet }}" target="_blank"
-                                                                class="btn btn-sm btn-primary mr-2">
-                                                                <i class="fas fa-video"></i> Join Meeting
+                                                                class="btn btn-sm btn-info mr-1" data-toggle="tooltip"
+                                                                title="Join Meeting">
+                                                                <i class="fas fa-video"></i>
                                                             </a>
                                                         @endif
+
+                                                        {{-- Tombol Download QR --}}
                                                         <a href="{{ route('pendaftaran.qrcode.download.peserta', ['id' => $item->id]) }}"
-                                                            class="btn btn-sm btn-secondary mr-2">
-                                                            <i class="fas fa-qrcode"></i> Download QR
+                                                            class="btn btn-sm btn-secondary mr-1" data-toggle="tooltip"
+                                                            title="Download QR Code">
+                                                            <i class="fas fa-qrcode"></i>
                                                         </a>
+
+                                                        {{-- Tombol Download Sertifikat (KONDISIONAL) --}}
+                                                        @if ($item->show_sertifikat == 'Yes' && $item->sudah_presensi)
+                                                            <a href="{{ route('panel-peserta.sertifikat.download', ['pendaftaranId' => $item->id]) }}"
+                                                                class="btn btn-sm btn-success" target="_blank"
+                                                                data-toggle="tooltip" title="Lihat Sertifikat">
+                                                                <i class="fas fa-certificate"></i>
+                                                            </a>
+                                                        @elseif ($item->show_sertifikat == 'Yes' && !$item->sudah_presensi)
+                                                            {{-- Tombol disabled jika belum presensi --}}
+                                                            <button class="btn btn-sm btn-outline-secondary" disabled
+                                                                data-toggle="tooltip"
+                                                                title="Sertifikat tersedia setelah presensi">
+                                                                <i class="fas fa-certificate"></i>
+                                                            </button>
+                                                        @endif
+                                                        {{-- Akhir Tombol Sertifikat --}}
+
                                                     </div>
                                                 @else
                                                     -
                                                 @endif
+                                                {{-- --- AKHIR MODIFIKASI AKSI --- --}}
                                             </td>
                                         </tr>
                                     @endforeach
@@ -80,6 +117,8 @@
                 "responsive": true,
                 "autoWidth": false
             });
+            // Aktifkan tooltip
+            $('[data-toggle="tooltip"]').tooltip();
         });
     </script>
 @endpush
