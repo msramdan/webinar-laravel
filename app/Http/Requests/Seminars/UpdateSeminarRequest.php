@@ -22,10 +22,10 @@ class UpdateSeminarRequest extends FormRequest
         return [
             'nama_seminar' => 'required|string|max:250',
             'deskripsi' => 'required|string',
-            'lampiran' => 'nullable|image|max:4000',
+            'lampiran' => 'nullable|image|max:6000',
             'is_active' => 'required|in:Yes,No',
             'show_sertifikat' => 'required|in:Yes,No',
-            'template_sertifikat' => 'nullable|image|max:4000',
+            'template_sertifikat' => 'nullable|image|max:6000',
         ];
     }
 }
