@@ -143,6 +143,22 @@ return [
             ]
         ],
         [
+            'header' => 'Kampus',
+            'permissions' => [
+                'kampus view'
+            ],
+            'menus' => [
+                [
+                    'title' => 'Data Kampus',
+                    'icon' => '<i class="bi bi-building"></i>',  // Changed icon here
+                    'route' => '/kampus',
+                    'permission' => 'kampus view',
+                    'permissions' => [],
+                    'submenus' => []
+                ]
+            ]
+        ],
+        [
             'header' => 'Pendaftaran',
             'permissions' => [
                 'pendaftaran view'
@@ -166,7 +182,7 @@ return [
             'menus' => [
                 [
                     'title' => 'Laporan Presensi',
-                    'icon' => '<i class="fas fa-chalkboard-teacher"></i>',  // Mengganti icon dengan Font Awesome
+                    'icon' => '<i class="fas fa-chalkboard-teacher"></i>',
                     'route' => '/laporan',
                     'permission' => 'laporan presensi view',
                     'permissions' => [],
@@ -231,6 +247,6 @@ return [
                     ]
                 ]
             ]
-        ],
+        ]
     ]
 ];

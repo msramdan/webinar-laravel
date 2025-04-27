@@ -46,6 +46,8 @@ Route::middleware(['auth', 'web'])->group(function () {
     Route::resource('users', App\Http\Controllers\UserController::class);
     Route::resource('roles', App\Http\Controllers\RoleAndPermissionController::class);
 
+    Route::resource('kampus', App\Http\Controllers\KampusController::class)->middleware('auth');
+
     Route::resource('backup-database', App\Http\Controllers\BackupDatabaseController::class)->only(['index']);
     Route::get('/backup/download', [App\Http\Controllers\BackupDatabaseController::class, 'downloadBackup'])->name('backup.download');
     Route::resource('peserta', App\Http\Controllers\PesertaController::class);
