@@ -68,6 +68,8 @@ Route::middleware(['auth', 'web'])->group(function () {
 
     Route::prefix('laporan')->controller(LaporanPresensiController::class)->group(function () {
         Route::get('/', 'index')->name('laporan.index');
+        Route::get('/sesi-seminar/{id}', 'laporanSesiSeminar')->name('laporan.sesi.seminar');
+        Route::get('/laporan-sesi-seminar/{seminar}', 'getData')->name('laporan.sesi.data');
     });
 
     Route::prefix('seminar')->group(function () {

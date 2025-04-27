@@ -43,4 +43,39 @@ class LaporanPresensiController extends Controller implements HasMiddleware
 
         return view('laporan-presensi.index');
     }
+
+    public function laporanSesiSeminar($seminarId)
+    {
+        $seminar = DB::table('seminar')->where('id', $seminarId)->first();
+        return view('laporan-presensi.daftar_sesi', compact('seminar'));
+    }
+
+    public function getData($seminarId)
+    {
+        $sesi = DB::table('sesi_seminar')
+            ->where('seminar_id', $seminarId)
+            ->select(['id', 'nama_sesi', 'kuota', 'harga_tiket', 'tanggal_pelaksanaan', 'link_gmeet', 'created_at', 'tempat_seminar']);
+
+        return DataTables::of($sesi)
+            ->addIndexColumn()
+            ->addColumn('harga', function ($row) {
+                return formatRupiah($row->harga_tiket);;
+            })
+            ->addColumn('tanggal', function ($row) {
+                return date('d M Y H:i', strtotime($row->tanggal_pelaksanaan));
+            })
+            ->addColumn('action', function ($row) {
+                $buttons = '';
+                if (auth()->user()->can('laporan presensi export')) {
+                    $buttons .= '
+                        <button class="btn btn-sm btn-danger btn-download-presensi" data-id="' . $row->id . '">
+                            <i class="fas fa-file-pdf"></i> Download
+                        </button>
+                    ';
+                }
+                return $buttons;
+            })
+            ->rawColumns(['action'])
+            ->toJson();
+    }
 }
