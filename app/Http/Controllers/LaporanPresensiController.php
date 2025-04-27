@@ -8,6 +8,7 @@ use Illuminate\Http\{JsonResponse};
 use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use PDF;
 
 class LaporanPresensiController extends Controller implements HasMiddleware
 {
@@ -68,14 +69,44 @@ class LaporanPresensiController extends Controller implements HasMiddleware
                 $buttons = '';
                 if (auth()->user()->can('laporan presensi export')) {
                     $buttons .= '
-                        <button class="btn btn-sm btn-danger btn-download-presensi" data-id="' . $row->id . '">
-                            <i class="fas fa-file-pdf"></i> Download
-                        </button>
-                    ';
+                    <a href="' . route('laporan.presensi.download', ['sesi' => $row->id]) . '" class="btn btn-sm btn-danger">
+                        <i class="fas fa-file-pdf"></i> Download
+                    </a>
+                ';
                 }
                 return $buttons;
             })
             ->rawColumns(['action'])
             ->toJson();
     }
+
+    public function downloadPresensi($sesiId)
+    {
+        // Ambil semua peserta yang daftar ke sesi ini, apapun status presensinya
+        $peserta = DB::table('pendaftaran')
+            ->join('peserta', 'pendaftaran.peserta_id', '=', 'peserta.id')
+            ->leftJoin('presensi', function($join) {
+                $join->on('pendaftaran.id', '=', 'presensi.pendaftaran_id');
+            })
+            ->where('pendaftaran.sesi_id', $sesiId)
+            ->select(
+                'peserta.nama',
+                'peserta.no_telepon',
+                'peserta.email',
+                'peserta.alamat',
+                DB::raw('CASE WHEN presensi.id IS NULL THEN "Tidak Hadir" ELSE "Hadir" END as status_presensi'),
+                'presensi.waktu_presensi'
+            )
+            ->orderBy('peserta.nama')
+            ->get();
+
+        $sesi = DB::table('sesi_seminar')
+            ->where('id', $sesiId)
+            ->first();
+
+        $pdf = \PDF::loadView('laporan-presensi.laporan', compact('peserta', 'sesi'));
+
+        return $pdf->stream('laporan-presensi-' . $sesi->nama_sesi . '.pdf');
+    }
+
 }
