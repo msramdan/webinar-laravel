@@ -21,6 +21,6 @@ class Sesi extends Model
      *
      * @var string[]
      */
-    protected $fillable = ['nama_sesi', 'kuota', 'harga_tiket', 'lampiran', 'tanggal_pelaksanaan','link_gmeet'];
+    protected $fillable = ['nama_sesi', 'kuota', 'harga_tiket', 'lampiran', 'tanggal_pelaksanaan','link_gmeet', 'tempat_seminar'];
 
 }

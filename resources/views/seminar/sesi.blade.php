@@ -93,6 +93,10 @@
                                     <input type="number" class="form-control" id="harga_tiket" name="harga_tiket"
                                         min="0" step="1000" required>
                                 </div>
+                                <div class="form-group">
+                                    <label for="tempat_seminar">Tempat Seminar</label>
+                                    <input type="text" class="form-control" id="tempat_seminar" name="tempat_seminar" required>
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -241,6 +245,7 @@
                         $('#kuota').val(response.kuota);
                         $('#harga_tiket').val(response.harga_tiket);
                         $('#link_gmeet').val(response.link_gmeet);
+                        $('#tempat_seminar').val(response.tempat_seminar);
 
                         // Format datetime for input
                         const dt = new Date(response.tanggal_pelaksanaan);

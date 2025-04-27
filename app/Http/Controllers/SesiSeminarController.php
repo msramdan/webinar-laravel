@@ -64,6 +64,7 @@ class SesiSeminarController extends Controller
             'tanggal_pelaksanaan' => 'required|date',
             'link_gmeet' => 'nullable|url',
             'lampiran' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+            'tempat_seminar' => 'required|string|max:255',
         ]);
 
         $lampiranPath = null;
@@ -80,6 +81,7 @@ class SesiSeminarController extends Controller
             'link_gmeet' => $request->link_gmeet,
             'lampiran' => $lampiranPath,
             'seminar_id' => $seminarId,
+            'tempat_seminar' => $request->tempat_seminar,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -98,6 +100,7 @@ class SesiSeminarController extends Controller
             'tanggal_pelaksanaan' => $sesi->tanggal_pelaksanaan,
             'link_gmeet' => $sesi->link_gmeet,
             'lampiran' => $sesi->lampiran,
+            'tempat_seminar' => $sesi->tempat_seminar
         ]);
     }
 

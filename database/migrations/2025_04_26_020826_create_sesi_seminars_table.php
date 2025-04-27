@@ -16,6 +16,7 @@ class CreateSesiSeminarsTable extends Migration
             $table->string('lampiran')->nullable();
             $table->dateTime('tanggal_pelaksanaan');
             $table->string('link_gmeet')->nullable();
+            $table->string('tempat_seminar');
             $table->foreignId('seminar_id')->constrained('seminar')->onDelete('cascade');
             $table->timestamps();
         });
