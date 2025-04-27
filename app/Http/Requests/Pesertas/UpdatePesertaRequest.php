@@ -1,30 +1,35 @@
 <?php
 
-namespace App\Http\Requests\Pesertas;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdatePesertaRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     */
     public function rules(): array
     {
+        $pesertaId = $this->route('peserta')->id ?? null;
+
         return [
-            'nama' => 'required|string|max:255',
-			'no_telepon' => 'required|max:15',
-			'email' => 'required|email|unique:peserta,email,' . request()->segment(2),
-			'alamat' => 'required|string',
-			'password' => 'nullable|confirmed',
+            'nama'        => ['required', 'string', 'max:255'],
+            'no_telepon'  => ['required', 'string', 'max:15', 'regex:/^[0-9]+$/'],
+            'email'       => [
+                'required', 'string', 'email', 'max:255',
+                Rule::unique('peserta', 'email')->ignore($pesertaId),
+            ],
+            'alamat'      => ['required', 'string'],
+            'kampus_id'   => ['required', 'integer', 'exists:kampus,id'],
+            'password'    => ['nullable', 'string', 'min:6', 'confirmed'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'no_telepon.regex' => 'No. telepon hanya boleh berisi angka.',
+            'kampus_id.exists' => 'Kampus yang dipilih tidak valid.',
         ];
     }
 }
+

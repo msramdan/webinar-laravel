@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Peserta;
 use App\Http\Requests\Pesertas\{StorePesertaRequest, UpdatePesertaRequest};
+use App\Models\Kampus;
 use Illuminate\Contracts\View\View;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\{JsonResponse, RedirectResponse};
 use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 class PesertaController extends Controller implements HasMiddleware
 {
     /**
@@ -25,32 +27,37 @@ class PesertaController extends Controller implements HasMiddleware
         ];
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
-            $pesertas = Peserta::query();
+            $query = DB::table('peserta')
+                ->join('kampus', 'peserta.kampus_id', '=', 'kampus.id')
+                ->select(
+                    'peserta.*',
+                    'kampus.nama_kampus',
+                );
 
-            return DataTables::of($pesertas)
+            return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('alamat', function ($row) {
-                    return str($row->alamat)->limit(100);
+                    return Str::limit($row->alamat, 100);
                 })
                 ->addColumn('action', 'peserta.include.action')
+                ->rawColumns(['action'])
                 ->toJson();
         }
 
         return view('peserta.index');
     }
 
+
     /**
      * Show the form for creating a new resource.
      */
     public function create(): View
     {
-        return view('peserta.create');
+        $kampus = Kampus::all(); // Get all Kampus records
+        return view('peserta.create', compact('kampus'));
     }
 
     /**
@@ -82,8 +89,8 @@ class PesertaController extends Controller implements HasMiddleware
     public function edit($id): View
     {
         $peserta = Peserta::findOrFail($id);
-
-        return view('peserta.edit', compact('peserta'));
+        $kampus = Kampus::all(); // Get all Kampus records
+        return view('peserta.edit', compact('peserta', 'kampus'));
     }
 
     /**

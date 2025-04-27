@@ -11,6 +11,28 @@
             @enderror
         </div>
     </div>
+
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="kampus_id">{{ __('Kampus') }}</label>
+            <select name="kampus_id" id="kampus_id" class="form-control @error('kampus_id') is-invalid @enderror"
+                required>
+                <option value="">-- {{ __('Pilih Kampus') }} --</option>
+                @foreach ($kampus as $item)
+                    <option value="{{ $item->id }}"
+                        {{ isset($peserta) && $peserta->kampus_id == $item->id ? 'selected' : '' }}>
+                        {{ $item->nama_kampus }}
+                    </option>
+                @endforeach
+            </select>
+            @error('kampus_id')
+                <span class="text-danger">
+                    {{ $message }}
+                </span>
+            @enderror
+        </div>
+    </div>
+
     <div class="col-md-6">
         <div class="form-group">
             <label for="no-telepon">{{ __('No Telepon') }}</label>
@@ -36,32 +58,6 @@
                 <span class="text-danger">
                     {{ $message }}
                 </span>
-            @enderror
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="form-group">
-            <label for="kampus_asal">{{ __('Kampus Asal') }}</label>
-            <select name="kampus_asal" id="kampus_asal" class="form-control @error('kampus_asal') is-invalid @enderror" required>
-                <option value="UGM" {{ isset($peserta) && $peserta->kampus_asal == 'UGM' ? 'selected' : '' }}>UGM</option>
-                <option value="UNS" {{ isset($peserta) && $peserta->kampus_asal == 'UNS' ? 'selected' : '' }}>UNS</option>
-                <option value="UNY" {{ isset($peserta) && $peserta->kampus_asal == 'UNY' ? 'selected' : '' }}>UNY</option>
-                <option value="Lainnya" {{ isset($peserta) && $peserta->kampus_asal == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
-            </select>
-            @error('kampus_asal')
-                <span class="text-danger">{{ $message }}</span>
-            @enderror
-        </div>
-    </div>
-
-    <div class="col-md-6" id="kampus_lainnya_div" style="{{ old('kampus_asal') == 'Lainnya' || (isset($peserta) && $peserta->kampus_asal == 'Lainnya') ? '' : 'display: none;' }}">
-        <div class="form-group">
-            <label for="kampus_lainnya">{{ __('Nama Kampus Lainnya') }}</label>
-            <input type="text" name="kampus_lainnya" id="kampus_lainnya" class="form-control @error('kampus_lainnya') is-invalid @enderror"
-                   value="{{ old('kampus_lainnya', isset($peserta) && $peserta->kampus_asal == 'Lainnya' ? $peserta->kampus_asal : '') }}"
-                   placeholder="{{ __('Nama Kampus') }}" {{ old('kampus_asal') == 'Lainnya' || (isset($peserta) && $peserta->kampus_asal == 'Lainnya') ? 'required' : '' }} />
-            @error('kampus_lainnya')
-                <span class="text-danger">{{ $message }}</span>
             @enderror
         </div>
     </div>
@@ -105,30 +101,3 @@
         </div>
     </div>
 </div>
-
-@push('js')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const kampusAsal = document.getElementById('kampus_asal');
-        const kampusLainnyaDiv = document.getElementById('kampus_lainnya_div');
-        const kampusLainnya = document.getElementById('kampus_lainnya');
-
-        // Toggle the visibility of the "kampus_lainnya" field
-        function toggleKampusLainnya() {
-            if (kampusAsal.value === 'Lainnya') {
-                kampusLainnyaDiv.style.display = '';
-                kampusLainnya.setAttribute('required', true);  // Make it required
-            } else {
-                kampusLainnyaDiv.style.display = 'none';
-                kampusLainnya.removeAttribute('required');  // Remove the required attribute
-            }
-        }
-
-        // Initial state check on page load
-        toggleKampusLainnya();
-
-        // Add event listener to the dropdown to toggle the field visibility when changed
-        kampusAsal.addEventListener('change', toggleKampusLainnya);
-    });
-</script>
-@endpush

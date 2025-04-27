@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('peserta', function (Blueprint $table) {
             $table->id();
             $table->string('nama', 255);
-			$table->string('no_telepon', 15);
-			$table->string('email')->unique();
-			$table->text('alamat');
-            $table->text('kampus_asal');
-			$table->string('password');
+            $table->string('no_telepon', 15);
+            $table->string('email')->unique();
+            $table->text('alamat');
+            $table->foreignId('kampus_id')
+                ->constrained('kampus')
+                ->onDelete('restrict'); // Prevent deletion if there are any related peserta
+            $table->string('password');
             $table->timestamps();
         });
     }

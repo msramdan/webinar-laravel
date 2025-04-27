@@ -6,25 +6,23 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StorePesertaRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     */
     public function rules(): array
     {
         return [
-            'nama' => 'required|string|max:255',
-			'no_telepon' => 'required|max:15',
-			'email' => 'required|email|unique:peserta,email',
-			'alamat' => 'required|string',
-			'password' => 'required|confirmed',
+            'nama'        => ['required', 'string', 'max:255'],
+            'no_telepon'  => ['required', 'string', 'max:15', 'regex:/^[0-9]+$/'],
+            'email'       => ['required', 'string', 'email', 'max:255', 'unique:peserta,email'],
+            'alamat'      => ['required', 'string'],
+            'kampus_id'   => ['required', 'integer', 'exists:kampus,id'],
+            'password'    => ['required', 'string', 'min:6', 'confirmed'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'no_telepon.regex' => 'No. telepon hanya boleh berisi angka.',
+            'kampus_id.exists' => 'Kampus yang dipilih tidak valid.',
         ];
     }
 }
