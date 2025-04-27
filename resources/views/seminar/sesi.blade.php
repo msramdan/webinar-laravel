@@ -47,6 +47,7 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Nama Sesi</th>
+                                        <th>Tempat Seminar</th>
                                         <th>Kuota</th>
                                         <th>Harga Tiket</th>
                                         <th>Tanggal Pelaksanaan</th>
@@ -182,6 +183,10 @@
                     {
                         data: 'nama_sesi',
                         name: 'nama_sesi'
+                    },
+                    {
+                        data: 'tempat_seminar',
+                        name: 'tempat_seminar'
                     },
                     {
                         data: 'kuota',

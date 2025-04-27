@@ -152,6 +152,7 @@
                                     <thead>
                                         <tr>
                                             <th>Nama Sesi</th>
+                                            <th>Tempat Seminar</th>
                                             <th>Tanggal</th>
                                             <th>Kuota</th>
                                             <th>Harga Tiket</th>
@@ -162,6 +163,7 @@
                                         @foreach($sesiSeminars as $sesi)
                                         <tr>
                                             <td>{{ $sesi->nama_sesi }}</td>
+                                            <td>{{ $sesi->tempat_seminar }}</td>
                                             <td>
                                                 {{ \Carbon\Carbon::parse($sesi->tanggal_pelaksanaan)->translatedFormat('d F Y H:i') }}
                                             </td>

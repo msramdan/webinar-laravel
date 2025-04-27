@@ -19,7 +19,7 @@ class SesiSeminarController extends Controller
     {
         $sesi = DB::table('sesi_seminar')
             ->where('seminar_id', $seminarId)
-            ->select(['id', 'nama_sesi', 'kuota', 'harga_tiket', 'tanggal_pelaksanaan', 'link_gmeet', 'created_at']);
+            ->select(['id', 'nama_sesi', 'kuota', 'harga_tiket', 'tanggal_pelaksanaan', 'link_gmeet', 'created_at','tempat_seminar']);
 
         return DataTables::of($sesi)
             ->addIndexColumn()
