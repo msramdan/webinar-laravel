@@ -22,7 +22,7 @@ class Peserta extends Authenticatable
      *
      * @var string[]
      */
-    protected $fillable = ['nama', 'no_telepon', 'email', 'alamat', 'password'];
+    protected $fillable = ['nama', 'no_telepon', 'email', 'alamat', 'password','kampus_id'];
 
     /**
      * Get the attributes that should be cast.

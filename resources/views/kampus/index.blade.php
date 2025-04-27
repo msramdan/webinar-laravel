@@ -1,20 +1,20 @@
 @extends('layouts.app')
 
-@section('title', __('Peserta'))
+@section('title', __('kampus'))
 
 @section('content')
     <div class="page-heading">
         <div class="page-title">
             <div class="row">
                 <div class="col-12 col-md-8 order-md-1 order-last">
-                    <h3>{{ __('Peserta') }}</h3>
+                    <h3>{{ __('kampus') }}</h3>
                     <p class="text-subtitle text-muted">
-                        {{ __('Below is a list of all peserta.') }}
+                        {{ __('Below is a list of all kampus.') }}
                     </p>
                 </div>
                 <x-breadcrumb>
-                    <li class="breadcrumb-item"><a href="/dashboard">{{ __('Dashboard') }}</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ __('Peserta') }}</li>
+                    <li class="breadcrumb-item"><a href="/">{{ __('Dashboard') }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ __('kampus') }}</li>
                 </x-breadcrumb>
             </div>
         </div>
@@ -22,11 +22,11 @@
         <section class="section">
             <x-alert></x-alert>
 
-            @can('peserta create')
+            @can('kampus create')
                 <div class="d-flex justify-content-end">
-                    <a href="{{ route('peserta.create') }}" class="btn btn-primary mb-3">
+                    <a href="{{ route('kampus.create') }}" class="btn btn-primary mb-3">
                         <i class="fas fa-plus"></i>
-                        {{ __('Create a new Peserta') }}
+                        {{ __('Create a new kampus') }}
                     </a>
                 </div>
             @endcan
@@ -39,12 +39,7 @@
                                 <table class="table table-striped" id="data-table" width="100%">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
-                                            <th>{{ __('Nama') }}</th>
-                                            <th>Asal Kampus</th>
-                                            <th>{{ __('No Telepon') }}</th>
-                                            <th>{{ __('Email') }}</th>
-                                            <th>{{ __('Alamat') }}</th>
+                                            <th>{{ __('Nama Kampus') }}</th>
                                             <th>{{ __('Action') }}</th>
                                         </tr>
                                     </thead>
@@ -74,32 +69,10 @@
         $('#data-table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('peserta.index') }}",
+            ajax: "{{ route('kampus.index') }}",
             columns: [{
-                    data: 'DT_RowIndex',
-                    name: 'DT_RowIndex',
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: 'nama',
-                    name: 'nama',
-                },
-                {
                     data: 'nama_kampus',
-                    name: 'kampus.nama_kampus',
-                },
-                {
-                    data: 'no_telepon',
-                    name: 'no_telepon',
-                },
-                {
-                    data: 'email',
-                    name: 'email',
-                },
-                {
-                    data: 'alamat',
-                    name: 'alamat',
+                    name: 'nama_kampus',
                 },
                 {
                     data: 'action',

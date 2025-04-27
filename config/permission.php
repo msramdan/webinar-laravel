@@ -215,5 +215,6 @@ return [
         ['group' => 'pendaftaran', 'access' => ['pendaftaran view', 'review pendaftaran']],
         ['group' => 'laporan presensi', 'access' => ['laporan presensi view', 'laporan presensi export']],
         ['group' => 'scan', 'access' => ['scan view']],
+        ['group' => 'kampus', 'access' => ['kampus view', 'kampus create', 'kampus edit', 'kampus delete']],
     ],
 ];

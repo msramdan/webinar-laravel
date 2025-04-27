@@ -122,3 +122,30 @@ if (!function_exists('set_active')) {
         // return request()->routeIs($uri) ? 'active' : '';
     }
 }
+
+if (!function_exists('formatRupiah')) {
+    /**
+     * Format number to Indonesian Rupiah (IDR) currency format
+     *
+     * @param  mixed  $amount  The amount to format
+     * @param  bool  $includeSymbol  Whether to include the 'Rp' symbol (default: true)
+     * @return string
+     */
+    function formatRupiah($amount, $includeSymbol = true)
+    {
+        // Check if the value is numeric
+        if (!is_numeric($amount)) {
+            return $amount;
+        }
+
+        // Format the number with thousands separators and no decimals
+        $formattedAmount = number_format($amount, 0, ',', '.');
+
+        // If the $includeSymbol is true, add the 'Rp' symbol in front
+        if ($includeSymbol) {
+            return 'Rp ' . $formattedAmount;
+        }
+
+        return $formattedAmount;
+    }
+}

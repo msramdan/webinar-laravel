@@ -4,11 +4,9 @@
 <head>
     <title>Pendaftaran Member</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-    <link rel="stylesheet"
-        href="{{asset('auth')}}/template/assets/plugins/animation/css/animate.min.css">
-    <link rel="stylesheet" href="{{asset('auth')}}/template/assets/css/style.css">
-    <link rel="stylesheet"
-        href="{{asset('auth')}}/template/assets/plugins/notification/css/notification.min.css">
+    <link rel="stylesheet" href="{{ asset('auth') }}/template/assets/plugins/animation/css/animate.min.css">
+    <link rel="stylesheet" href="{{ asset('auth') }}/template/assets/css/style.css">
+    <link rel="stylesheet" href="{{ asset('auth') }}/template/assets/plugins/notification/css/notification.min.css">
     <style>
         .alert span {
             cursor: pointer;
@@ -118,6 +116,31 @@
                                 </div>
 
                                 <div class="form-group">
+                                    <label for="kampus_id">Asal Kampus</label>
+                                    <div class="input-group mb-2">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-university"></i></span>
+                                        </div>
+                                        <select name="kampus_id" id="kampus_id"
+                                            class="form-control @error('kampus_id') is-invalid @enderror" required>
+                                            <option value="">-- Pilih Kampus --</option>
+                                            @foreach ($kampus as $item)
+                                                <option value="{{ $item->id }}"
+                                                    {{ old('kampus_id') == $item->id ? 'selected' : '' }}>
+                                                    {{ $item->nama_kampus }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('kampus_id')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
                                     <label for="no_telp">Nomor Telepon</label>
                                     <div class="input-group mb-2">
                                         <div class="input-group-prepend">
@@ -175,8 +198,8 @@
                                             <span class="input-group-text"><i class="fas fa-lock"></i></span>
                                         </div>
                                         <input placeholder="Password" id="password" type="password"
-                                            class="form-control @error('password') is-invalid @enderror" name="password"
-                                            required autocomplete="new-password">
+                                            class="form-control @error('password') is-invalid @enderror"
+                                            name="password" required autocomplete="new-password">
                                         @error('password')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -191,9 +214,9 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-lock"></i></span>
                                         </div>
-                                        <input placeholder="Konfirmasi Password" id="password-confirm" type="password"
-                                            class="form-control" name="password_confirmation" required
-                                            autocomplete="new-password">
+                                        <input placeholder="Konfirmasi Password" id="password-confirm"
+                                            type="password" class="form-control" name="password_confirmation"
+                                            required autocomplete="new-password">
                                     </div>
                                 </div>
 
@@ -217,7 +240,7 @@
                                 <div class="carousel-item active">
                                     <div class="auth-prod-slidebg bg-1"></div>
                                     <div class="carousel-caption d-none d-md-block">
-                                        <img src="{{asset('auth')}}/template/assets/images/product/c1.png"
+                                        <img src="{{ asset('auth') }}/template/assets/images/product/c1.png"
                                             alt="product images" class="img-fluid mb-5">
                                         <h5>Aplikasi Pendaftaran Webinar (Seminar)</h5>
                                         <p class="mb-5">Sistem pendaftaran peserta webinar (seminar) menggunakan QR
@@ -227,7 +250,7 @@
                                 <div class="carousel-item">
                                     <div class="auth-prod-slidebg bg-2"></div>
                                     <div class="carousel-caption d-none d-md-block">
-                                        <img src="{{asset('auth')}}/template/assets/images/product/c2.jpg"
+                                        <img src="{{ asset('auth') }}/template/assets/images/product/c2.jpg"
                                             alt="product images" class="img-fluid mb-5">
                                         <h5>Daftarkan diri Anda sekarang</h5>
                                         <p class="mb-5">Bergabung dengan komunitas webinar kami</p>
@@ -246,12 +269,9 @@
             </div>
         </div>
     </div>
-    <script src="{{asset('auth')}}/template/assets/js/vendor-all.min.js"></script>
-    <script src="{{asset('auth')}}/template/assets/plugins/bootstrap/js/bootstrap.min.js">
-    </script>
-    <script
-        src="{{asset('auth')}}/template/assets/plugins/notification/js/bootstrap-growl.min.js">
-    </script>
+    <script src="{{ asset('auth') }}/template/assets/js/vendor-all.min.js"></script>
+    <script src="{{ asset('auth') }}/template/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="{{ asset('auth') }}/template/assets/plugins/notification/js/bootstrap-growl.min.js"></script>
 </body>
 
 </html>
