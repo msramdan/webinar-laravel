@@ -41,6 +41,7 @@
                                         <tr>
                                             <th>#</th>
                                             <th>{{ __('Nama') }}</th>
+                                            <th>Kampus Asal</th>
 											<th>{{ __('No Telepon') }}</th>
 											<th>{{ __('Email') }}</th>
 											<th>{{ __('Alamat') }}</th>
@@ -80,6 +81,10 @@
                 {
                     data: 'nama',
                     name: 'nama',
+                },
+                {
+                    data: 'kampus_asal',
+                    name: 'kampus_asal',
                 },
 				{
                     data: 'no_telepon',

@@ -65,7 +65,13 @@ class AuthController extends Controller
 
     public function showLoginForm()
     {
-        return view('panel-peserta.auth.login');
+        $sponsors = DB::table('sponsor')
+            ->join('seminar', 'sponsor.seminar_id', '=', 'seminar.id')
+            ->where('seminar.is_active', 'Yes')
+            ->select('sponsor.*')
+            ->get();
+
+        return view('panel-peserta.auth.login', compact('sponsors'));
     }
 
     public function login(Request $request)

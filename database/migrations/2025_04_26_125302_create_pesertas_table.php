@@ -17,6 +17,7 @@ return new class extends Migration
 			$table->string('no_telepon', 15);
 			$table->string('email')->unique();
 			$table->text('alamat');
+            $table->text('kampus_asal');
 			$table->string('password');
             $table->timestamps();
         });
