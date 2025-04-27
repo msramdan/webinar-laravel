@@ -21,7 +21,7 @@ class Pendaftaran extends Model
      *
      * @var string[]
      */
-    protected $fillable = ['sesi_id', 'peserta_id', 'status', 'tanggal_pengajuan'];
+    protected $fillable = ['sesi_id', 'peserta_id', 'status', 'tanggal_pengajuan', 'nomor_pendaftaran',];
 
     /**
      * Get the attributes that should be cast.
@@ -32,5 +32,4 @@ class Pendaftaran extends Model
     {
         return ['tanggal_pengajuan' => 'datetime:Y-m-d H:i:s', 'created_at' => 'datetime:Y-m-d H:i:s', 'updated_at' => 'datetime:Y-m-d H:i:s'];
     }
-
 }

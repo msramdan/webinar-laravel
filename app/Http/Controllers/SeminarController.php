@@ -10,12 +10,15 @@ use App\Generators\Services\ImageService;
 use Illuminate\Http\{JsonResponse, RedirectResponse};
 use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class SeminarController extends Controller implements HasMiddleware
 {
     public function __construct(public ImageService $imageService, public string $lampiranPath = '')
     {
         $this->lampiranPath = storage_path('app/public/uploads/lampirans/');
+        $this->sertifikatTemplatePath = storage_path('app/public/uploads/sertifikat_templates/');
     }
 
     /**
@@ -110,8 +113,19 @@ class SeminarController extends Controller implements HasMiddleware
     {
         $validated = $request->validated();
 
+
         $validated['lampiran'] = $this->imageService->upload(name: 'lampiran', path: $this->lampiranPath);
 
+        if ($request->hasFile('template_sertifikat')) {
+            // Gunakan nama unik atau nama asli + timestamp
+            $fileName = time() . '_' . $request->file('template_sertifikat')->getClientOriginalName();
+            // Simpan file menggunakan Storage facade ke path yang ditentukan
+            $request->file('template_sertifikat')->storeAs('public/uploads/sertifikat_templates', $fileName);
+            // Simpan nama file ke database
+            $validated['template_sertifikat'] = $fileName;
+        } else {
+            $validated['template_sertifikat'] = null;
+        }
         Seminar::create($validated);
 
         return to_route('seminar.index')->with('success', __('The seminar was created successfully.'));
@@ -163,6 +177,21 @@ class SeminarController extends Controller implements HasMiddleware
 
         $validated['lampiran'] = $this->imageService->upload(name: 'lampiran', path: $this->lampiranPath, defaultImage: $seminar?->lampiran);
 
+        if ($request->hasFile('template_sertifikat')) {
+            // 1. Hapus file lama jika ada
+            if ($seminar->template_sertifikat) {
+                Storage::delete('public/uploads/sertifikat_templates/' . $seminar->template_sertifikat);
+            }
+            // 2. Upload file baru
+            $fileName = time() . '_' . $request->file('template_sertifikat')->getClientOriginalName();
+            $request->file('template_sertifikat')->storeAs('public/uploads/sertifikat_templates', $fileName);
+            // 3. Simpan nama file baru ke database
+            $validated['template_sertifikat'] = $fileName;
+        } else {
+            // Jika tidak ada file baru diupload, JANGAN ubah nama file di database
+            // Hapus key dari array validated agar tidak mengupdate jadi null
+            unset($validated['template_sertifikat']);
+        }
         $seminar->update($validated);
 
         return to_route('seminar.index')->with('success', __('The seminar was updated successfully.'));
@@ -175,10 +204,14 @@ class SeminarController extends Controller implements HasMiddleware
     {
         try {
             $lampiran = $seminar->lampiran;
+            $templateSertifikat = $seminar->template_sertifikat;
 
             $seminar->delete();
 
             $this->imageService->delete(image: $this->lampiranPath . $lampiran);
+            if ($templateSertifikat) {
+                Storage::delete('public/uploads/sertifikat_templates/' . $templateSertifikat);
+            }
 
             return to_route('seminar.index')->with('success', __('The seminar was deleted successfully.'));
         } catch (\Exception $e) {
