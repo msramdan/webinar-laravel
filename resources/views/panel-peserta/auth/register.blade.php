@@ -7,7 +7,79 @@
     <link rel="stylesheet" href="{{ asset('auth') }}/template/assets/plugins/animation/css/animate.min.css">
     <link rel="stylesheet" href="{{ asset('auth') }}/template/assets/css/style.css">
     <link rel="stylesheet" href="{{ asset('auth') }}/template/assets/plugins/notification/css/notification.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+
     <style>
+        .input-group .select2-container--default {
+            flex: 1 1 auto;
+            /* Agar select2 mengisi sisa ruang */
+            width: 1% !important;
+            /* Perlu !important untuk override default width select2 */
+        }
+
+        /* Style untuk kotak pilihan Select2 */
+        .input-group .select2-container--default .select2-selection--single {
+            height: calc(1.5em + .75rem + 2px);
+            /* Samakan tinggi */
+            padding: .375rem .75rem;
+            border: 1px solid #ced4da;
+            /* Border standar */
+            border-left: 0;
+            /* Hapus border kiri karena sudah ada dari icon */
+            border-top-left-radius: 0;
+            /* Hapus radius kiri atas */
+            border-bottom-left-radius: 0;
+            /* Hapus radius kiri bawah */
+            background-color: #f8f9fe;
+            /* Samakan background */
+            /* Pastikan teks vertikal di tengah jika perlu */
+            display: flex;
+            align-items: center;
+        }
+
+        /* Style untuk teks yang dipilih */
+        .input-group .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 1.5;
+            padding-left: 0;
+            padding-right: 0;
+            color: #495057;
+            /* Warna teks input standar */
+        }
+
+        /* Style untuk placeholder */
+        .input-group .select2-container--default .select2-selection--single .select2-selection__placeholder {
+            color: #6c757d;
+            /* Warna placeholder */
+        }
+
+        /* Style untuk panah dropdown */
+        .input-group .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: calc(1.5em + .75rem);
+            position: absolute;
+            top: 1px;
+            /* Sesuaikan jika perlu */
+            right: 0.5rem;
+            width: 20px;
+        }
+
+        /* Style untuk dropdown yang muncul */
+        .select2-dropdown {
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            background-color: #f8f9fe;
+            /* Samakan background */
+            z-index: 1050;
+            /* Pastikan dropdown muncul di atas elemen lain jika ada modal */
+        }
+
+        /* Style untuk kotak search di dalam dropdown */
+        .select2-container--default .select2-search--dropdown .select2-search__field {
+            border: 1px solid #ced4da;
+            background-color: #fff;
+            /* Mungkin perlu background putih untuk kontras */
+        }
+
         .alert span {
             cursor: pointer;
             padding-right: 5px;
@@ -272,6 +344,17 @@
     <script src="{{ asset('auth') }}/template/assets/js/vendor-all.min.js"></script>
     <script src="{{ asset('auth') }}/template/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
     <script src="{{ asset('auth') }}/template/assets/plugins/notification/js/bootstrap-growl.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Inisialisasi Select2 pada elemen dengan ID 'kampus_id'
+            $('#kampus_id').select2({
+                placeholder: '-- Pilih Kampus --',
+                // theme: 'bootstrap-5' // Coba hilangkan theme jika tidak cocok
+                // width: 'resolve' // Atau coba atur width
+            });
+        });
+    </script>
 </body>
 
 </html>
