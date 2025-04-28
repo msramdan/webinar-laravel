@@ -58,7 +58,7 @@ class DashboardPesertaController extends Controller
 
     public function downloadSertifikat($pendaftaranId)
     {
-        $pesertaId = Auth::id();
+        $pesertaId = Auth::guard('panel-peserta')->user()->id;
 
         $pendaftaran = DB::table('pendaftaran as p')
             ->join('peserta as ps', 'p.peserta_id', '=', 'ps.id')
@@ -85,7 +85,7 @@ class DashboardPesertaController extends Controller
         }
 
         // 3. Validasi: Kepemilikan
-        if ($pendaftaran->peserta_id !== $pesertaId) {
+        if ($pendaftaran->peserta_id != $pesertaId) {
             abort(403, 'Anda tidak berhak mengakses sertifikat ini.');
         }
 
