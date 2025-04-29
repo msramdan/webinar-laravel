@@ -101,20 +101,23 @@ class DashboardPesertaController extends Controller
                 ->with('error', 'Anda harus melakukan presensi terlebih dahulu untuk mengunduh sertifikat.');
         }
 
-        $templateImagePath = public_path('images/sertifikat-bg.png');
-        if ($pendaftaran->template_sertifikat) {
-            $uploadedPath = public_path('storage/uploads/sertifikat_templates/' . $pendaftaran->template_sertifikat);
+        $defaultTemplatePath = public_path('images/sertifikat-bg.png');
+
+        $templateFilePath = $defaultTemplatePath; // default
+
+        if (!empty($pendaftaran->template_sertifikat)) {
+            $uploadedPath = storage_path('app/public/uploads/sertifikat_templates/' . $pendaftaran->template_sertifikat);
+
             if (file_exists($uploadedPath)) {
-                $templateImagePath = $uploadedPath;
+                $templateFilePath = $uploadedPath;
             }
         }
 
-        // 6. Siapkan data untuk view
         $data = [
             'namaPeserta'   => $pendaftaran->nama_peserta,
             'pendaftaranId' => $pendaftaran->pendaftaran_id,
-            'nomorSertifikat' => $pendaftaran->nomor_pendaftaran,
-            'templatePath' => $templateImagePath
+            'nomorSertifikat' => 'dsada',
+            'templatePath' => $templateFilePath, // <- path lokal, bukan URL
         ];
 
         // 7. Generate PDF
