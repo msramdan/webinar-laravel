@@ -8,7 +8,7 @@ use Illuminate\Notifications\Notifiable;
 
 class Peserta extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     /**
      * The table associated with the model.
@@ -22,7 +22,16 @@ class Peserta extends Authenticatable
      *
      * @var string[]
      */
-    protected $fillable = ['nama', 'no_telepon', 'email', 'alamat', 'password', 'kampus_id', 'is_verified', 'verification_token'];
+    protected $fillable = [
+        'nama',
+        'no_telepon',
+        'email',
+        'alamat',
+        'password',
+        'kampus_id',
+        'is_verified',
+        'verification_token'
+    ];
 
     /**
      * Get the attributes that should be cast.
@@ -31,12 +40,25 @@ class Peserta extends Authenticatable
      */
     protected function casts(): array
     {
-        return ['nama' => 'string', 'no_telepon' => 'string', 'email' => 'string', 'alamat' => 'string', 'password' => 'string', 'created_at' => 'datetime:Y-m-d H:i:s', 'updated_at' => 'datetime:Y-m-d H:i:s', 'is_verified' => 'string'];
+        return [
+            'nama' => 'string',
+            'no_telepon' => 'string',
+            'email' => 'string',
+            'alamat' => 'string',
+            'password' => 'string',
+            'created_at' => 'datetime:Y-m-d H:i:s',
+            'updated_at' => 'datetime:Y-m-d H:i:s',
+            'is_verified' => 'string'
+        ];
     }
+
     /**
      * The attributes that should be hidden for serialization.
      *
      * @var string[]
      */
-    protected $hidden = ['password', 'verification_token'];
+    protected $hidden = [
+        'password',
+        'verification_token'
+    ];
 }
