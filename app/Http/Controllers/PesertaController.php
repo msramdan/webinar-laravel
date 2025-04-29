@@ -11,6 +11,7 @@ use Illuminate\Http\{JsonResponse, RedirectResponse};
 use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+
 class PesertaController extends Controller implements HasMiddleware
 {
     /**
@@ -33,17 +34,29 @@ class PesertaController extends Controller implements HasMiddleware
             $query = DB::table('peserta')
                 ->join('kampus', 'peserta.kampus_id', '=', 'kampus.id')
                 ->select(
-                    'peserta.*',
+                    'peserta.id', // Pastikan ID Peserta disertakan
+                    'peserta.nama',
                     'kampus.nama_kampus',
+                    'peserta.no_telepon',
+                    'peserta.email',
+                    'peserta.alamat',
+                    'peserta.is_verified' // Tambahkan kolom is_verified
                 );
 
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('alamat', function ($row) {
-                    return Str::limit($row->alamat, 100);
+                    return Str::limit($row->alamat, 50); // Batasi panjang alamat jika perlu
+                })
+                ->addColumn('is_verified', function ($row) { // Format kolom is_verified
+                    if ($row->is_verified == 'Yes') {
+                        return '<span class="badge bg-success">Terverifikasi</span>';
+                    } else {
+                        return '<span class="badge bg-danger">Belum</span>';
+                    }
                 })
                 ->addColumn('action', 'peserta.include.action')
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'is_verified']) // Tambahkan is_verified ke rawColumns
                 ->toJson();
         }
 
@@ -67,10 +80,11 @@ class PesertaController extends Controller implements HasMiddleware
     {
         $validated = $request->validated();
         $validated['password'] = bcrypt($request->password);
+        $validated['is_verified'] = $request->input('is_verified', 'No');
 
         Peserta::create($validated);
 
-        return to_route('peserta.index')->with('success', __('The Peserta was created successfully.'));
+        return to_route('peserta.index')->with('success', __('Peserta berhasil dibuat.'));
     }
 
     /**
@@ -78,7 +92,12 @@ class PesertaController extends Controller implements HasMiddleware
      */
     public function show($id): View
     {
-        $peserta = Peserta::where('id', $id)->firstOrFail();
+        // Ambil data peserta beserta nama kampusnya
+        $peserta = DB::table('peserta')
+            ->join('kampus', 'peserta.kampus_id', '=', 'kampus.id')
+            ->select('peserta.*', 'kampus.nama_kampus')
+            ->where('peserta.id', $id)
+            ->firstOrFail();
 
         return view('peserta.show', compact('peserta'));
     }
@@ -104,6 +123,9 @@ class PesertaController extends Controller implements HasMiddleware
         // Ambil semua data yang sudah tervalidasi
         $validated = $request->validated();
 
+        // Tambahkan is_verified dari form saat update
+        $validated['is_verified'] = $request->input('is_verified', $peserta->is_verified); // Ambil dari input, fallback ke nilai lama
+
         // Jika password tidak diisi, hapus key password agar tidak di‐update
         if (empty($request->password)) {
             unset($validated['password']);
@@ -116,7 +138,7 @@ class PesertaController extends Controller implements HasMiddleware
         $peserta->update($validated);
 
         return to_route('peserta.index')
-            ->with('success', __('The Peserta was updated successfully.'));
+            ->with('success', __('Data Peserta berhasil diperbarui.'));
     }
 
     public function destroy($id): RedirectResponse
@@ -129,10 +151,16 @@ class PesertaController extends Controller implements HasMiddleware
             $peserta->delete();
 
             return to_route('peserta.index')
-                ->with('success', __('The Peserta was deleted successfully.'));
+                ->with('success', __('Peserta berhasil dihapus.'));
         } catch (\Exception $e) {
+            // Cek apakah error disebabkan oleh constraint foreign key
+            if ($e instanceof \Illuminate\Database\QueryException && str_contains($e->getMessage(), 'foreign key constraint fails')) {
+                return to_route('peserta.index')
+                    ->with('error', __("Peserta tidak dapat dihapus karena terkait dengan data lain (misal: pendaftaran seminar)."));
+            }
+            // Tampilkan pesan error umum jika bukan karena constraint
             return to_route('peserta.index')
-                ->with('error', __("The Peserta can't be deleted because it's related to another table."));
+                ->with('error', __("Terjadi kesalahan saat menghapus peserta."));
         }
     }
 }

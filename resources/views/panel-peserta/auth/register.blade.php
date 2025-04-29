@@ -8,9 +8,20 @@
     <link rel="stylesheet" href="{{ asset('auth') }}/template/assets/css/style.css">
     <link rel="stylesheet" href="{{ asset('auth') }}/template/assets/plugins/notification/css/notification.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
+    {!! NoCaptcha::renderJs('id', false, 'recaptchaCallback') !!}
 
     <style>
+        /* Styling untuk error captcha jika diperlukan */
+        .invalid-feedback-captcha {
+            display: block;
+            /* Pastikan pesan error terlihat */
+            width: 100%;
+            margin-top: .25rem;
+            font-size: 80%;
+            color: #dc3545;
+            /* Warna error standar Bootstrap */
+        }
+
         .input-group .select2-container--default {
             flex: 1 1 auto;
             /* Agar select2 mengisi sisa ruang */
@@ -166,12 +177,27 @@
                 <div class="row align-items-center">
                     <div class="col-md-6 mb-5">
                         <div class="card-body">
+                            @if (
+                                $errors->any() &&
+                                    !$errors->has('g-recaptcha-response') &&
+                                    !$errors->has('nama') &&
+                                    !$errors->has('email') &&
+                                    !$errors->has('no_telepon') &&
+                                    !$errors->has('alamat') &&
+                                    !$errors->has('kampus_id') &&
+                                    !$errors->has('password'))
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    Terjadi kesalahan pada input Anda. Silakan periksa kembali.
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                            aria-hidden="true">&times;</span></button>
+                                </div>
+                            @endif
                             <form method="POST" action="{{ route('panel-peserta.register') }}">
                                 @csrf
                                 <h4 class="mb-3 f-w-400">Daftar Peserta Baru</h4>
 
                                 <div class="form-group">
-                                    <label for="nama_mhs">Nama Lengkap</label>
+                                    <label for="nama">Nama Lengkap</label>
                                     <div class="input-group mb-2">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-user"></i></span>
@@ -194,7 +220,8 @@
                                             <span class="input-group-text"><i class="fas fa-university"></i></span>
                                         </div>
                                         <select name="kampus_id" id="kampus_id"
-                                            class="form-control @error('kampus_id') is-invalid @enderror" required>
+                                            class="form-control select2 @error('kampus_id') is-invalid @enderror"
+                                            required>
                                             <option value="">-- Pilih Kampus --</option>
                                             @foreach ($kampus as $item)
                                                 <option value="{{ $item->id }}"
@@ -213,7 +240,7 @@
 
 
                                 <div class="form-group">
-                                    <label for="no_telp">Nomor Telepon</label>
+                                    <label for="no_telepon">Nomor Telepon</label>
                                     <div class="input-group mb-2">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-phone"></i></span>
@@ -281,7 +308,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="password_confirm">Konfirmasi Password</label>
+                                    <label for="password-confirm">Konfirmasi Password</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-lock"></i></span>
@@ -292,6 +319,14 @@
                                     </div>
                                 </div>
 
+                                <div class="form-group">
+                                    {!! NoCaptcha::display() !!}
+                                    @error('g-recaptcha-response')
+                                        <span class="invalid-feedback-captcha" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
                                 <input type="submit" name="submit" value="Daftar" class="btn btn-primary mb-4" />
 
                                 <a href="{{ route('panel-peserta.login') }}" class="login-link">
@@ -354,6 +389,10 @@
                 // width: 'resolve' // Atau coba atur width
             });
         });
+
+        var recaptchaCallback = function() {
+            console.log('reCAPTCHA ter-render.');
+        };
     </script>
 </body>
 

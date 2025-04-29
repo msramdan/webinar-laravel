@@ -9,7 +9,7 @@
                 <div class="col-12 col-md-8 order-md-1 order-last">
                     <h3>{{ __('Peserta') }}</h3>
                     <p class="text-subtitle text-muted">
-                        {{ __('Below is a list of all peserta.') }}
+                        {{ __('Berikut adalah daftar semua peserta.') }}
                     </p>
                 </div>
                 <x-breadcrumb>
@@ -26,7 +26,7 @@
                 <div class="d-flex justify-content-end">
                     <a href="{{ route('peserta.create') }}" class="btn btn-primary mb-3">
                         <i class="fas fa-plus"></i>
-                        {{ __('Create a new Peserta') }}
+                        {{ __('Tambah Peserta Baru') }}
                     </a>
                 </div>
             @endcan
@@ -45,6 +45,7 @@
                                             <th>{{ __('No Telepon') }}</th>
                                             <th>{{ __('Email') }}</th>
                                             <th>{{ __('Alamat') }}</th>
+                                            <th>Status Verifikasi</th>
                                             <th>{{ __('Action') }}</th>
                                         </tr>
                                     </thead>
@@ -87,7 +88,7 @@
                 },
                 {
                     data: 'nama_kampus',
-                    name: 'kampus.nama_kampus',
+                    name: 'kampus.nama_kampus', // Pastikan relasi benar jika eager loading
                 },
                 {
                     data: 'no_telepon',
@@ -100,6 +101,14 @@
                 {
                     data: 'alamat',
                     name: 'alamat',
+                    orderable: false, // Mungkin tidak perlu sort by alamat
+                    searchable: false
+                },
+                { // Tambah Definisi Kolom
+                    data: 'is_verified',
+                    name: 'is_verified',
+                    orderable: true, // Bisa disort
+                    searchable: true // Bisa difilter
                 },
                 {
                     data: 'action',

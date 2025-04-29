@@ -18,6 +18,7 @@ class UpdatePesertaRequest extends FormRequest
             'alamat'      => ['required', 'string'],
             'kampus_id'   => ['required', 'integer', 'exists:kampus,id'],
             'password'    => ['nullable', 'string', 'min:6', 'confirmed'],
+            'is_verified' => ['required', Rule::in(['Yes', 'No'])], // Tambahkan validasi is_verified
         ];
     }
 
@@ -26,6 +27,8 @@ class UpdatePesertaRequest extends FormRequest
         return [
             'no_telepon.regex' => 'No. telepon hanya boleh berisi angka.',
             'kampus_id.exists' => 'Kampus yang dipilih tidak valid.',
+            'is_verified.required' => 'Status verifikasi wajib dipilih.',
+            'is_verified.in' => 'Status verifikasi tidak valid.',
         ];
     }
 }

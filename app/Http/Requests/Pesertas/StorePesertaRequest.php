@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Pesertas;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StorePesertaRequest extends FormRequest
 {
@@ -15,6 +16,7 @@ class StorePesertaRequest extends FormRequest
             'alamat'      => ['required', 'string'],
             'kampus_id'   => ['required', 'integer', 'exists:kampus,id'],
             'password'    => ['required', 'string', 'min:6', 'confirmed'],
+            'is_verified' => ['required', Rule::in(['Yes', 'No'])],
         ];
     }
 
@@ -23,6 +25,8 @@ class StorePesertaRequest extends FormRequest
         return [
             'no_telepon.regex' => 'No. telepon hanya boleh berisi angka.',
             'kampus_id.exists' => 'Kampus yang dipilih tidak valid.',
+            'is_verified.required' => 'Status verifikasi wajib dipilih.',
+            'is_verified.in' => 'Status verifikasi tidak valid.',
         ];
     }
 }
