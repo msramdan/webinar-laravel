@@ -249,9 +249,9 @@ class DashboardPesertaController extends Controller
                 'error' => 'Anda sudah memiliki pendaftaran yang masih WAITING di sesi "' . $waitingRegistration->nama_sesi . '".'
             ], 400);
         }
+
         // Rule 3: Already registered in same session → reject
         $alreadyRegisteredInSession = $existingRegistrations->contains('sesi_id', $request->sesi_id);
-
         if ($alreadyRegisteredInSession) {
             return response()->json(['error' => 'Anda sudah terdaftar di sesi ini.'], 400);
         }
@@ -262,35 +262,58 @@ class DashboardPesertaController extends Controller
             ->where('status', 'Approved')
             ->count();
 
-        if ($approvedCount >= $sessionData->kuota) {
+        // Cek apakah auto approve diaktifkan
+        $autoApprove = env('AUTO_APPROVED_DAFTAR', false);
+
+        // Jika auto approve dan kuota masih tersedia
+        if ($autoApprove && $approvedCount < $sessionData->kuota) {
+            // Langsung approve pendaftaran
+            $pendaftaranId = DB::table('pendaftaran')->insertGetId([
+                'sesi_id'           => $request->sesi_id,
+                'peserta_id'        => $pesertaId,
+                'status'            => 'Approved',
+                'tanggal_pengajuan' => now(),
+                'created_at'        => now(),
+                'updated_at'        => now(),
+            ]);
+
+            // Generate nomor pendaftaran
+            $tahun = date('Y');
+            $nomorUrut = str_pad($pendaftaranId, 4, '0', STR_PAD_LEFT);
+            $nomorPendaftaranOtomatis = 'P' . $tahun . '-' . $nomorUrut;
+
+            DB::table('pendaftaran')
+                ->where('id', $pendaftaranId)
+                ->update(['nomor_pendaftaran' => $nomorPendaftaranOtomatis]);
+
+            return response()->json(['message' => 'Pendaftaran berhasil dan langsung di-APPROVE.']);
+        }
+        // Jika kuota penuh
+        elseif ($approvedCount >= $sessionData->kuota) {
             return response()->json(['error' => 'Kuota sesi sudah penuh.'], 400);
         }
+        // Jika tidak auto approve atau kuota penuh tapi auto approve false
+        else {
+            // Insert dengan status Waiting
+            $pendaftaranId = DB::table('pendaftaran')->insertGetId([
+                'sesi_id'           => $request->sesi_id,
+                'peserta_id'        => $pesertaId,
+                'status'            => 'Waiting',
+                'tanggal_pengajuan' => now(),
+                'created_at'        => now(),
+                'updated_at'        => now(),
+            ]);
 
-        // --- MULAI MODIFIKASI UNTUK NOMOR PENDAFTARAN ---
+            // Generate nomor pendaftaran
+            $tahun = date('Y');
+            $nomorUrut = str_pad($pendaftaranId, 4, '0', STR_PAD_LEFT);
+            $nomorPendaftaranOtomatis = 'P' . $tahun . '-' . $nomorUrut;
 
-        // 1. Insert data pendaftaran (tanpa nomor_pendaftaran) untuk mendapatkan ID
-        $pendaftaranId = DB::table('pendaftaran')->insertGetId([
-            'sesi_id'           => $request->sesi_id,
-            'peserta_id'        => $pesertaId,
-            'status'            => 'Waiting', // Status awal saat daftar
-            'tanggal_pengajuan' => now(),
-            'created_at'        => now(),
-            'updated_at'        => now(),
-            // 'token' akan diisi oleh admin saat Approved
-        ]);
+            DB::table('pendaftaran')
+                ->where('id', $pendaftaranId)
+                ->update(['nomor_pendaftaran' => $nomorPendaftaranOtomatis]);
 
-        // 2. Generate nomor pendaftaran
-        $tahun = date('Y'); // Ambil tahun saat ini
-        $nomorUrut = str_pad($pendaftaranId, 4, '0', STR_PAD_LEFT); // Format ID menjadi 4 digit
-        $nomorPendaftaranOtomatis = 'P' . $tahun . '-' . $nomorUrut;
-
-        // 3. Update record pendaftaran dengan nomor yang baru digenerate
-        DB::table('pendaftaran')
-            ->where('id', $pendaftaranId)
-            ->update(['nomor_pendaftaran' => $nomorPendaftaranOtomatis]);
-
-        // --- AKHIR MODIFIKASI ---
-
-        return response()->json(['message' => 'Pendaftaran berhasil. Menunggu konfirmasi dari admin.']);
+            return response()->json(['message' => 'Pendaftaran berhasil. Menunggu konfirmasi dari admin.']);
+        }
     }
 }
