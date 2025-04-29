@@ -15,12 +15,12 @@
     <div class="col-md-6">
         <div class="form-group">
             <label for="kampus_id">{{ __('Kampus') }}</label>
-            <select name="kampus_id" id="kampus_id" class="form-control @error('kampus_id') is-invalid @enderror"
+            <select name="kampus_id" id="kampus_id" class="form-select select2 @error('kampus_id') is-invalid @enderror"
                 required>
                 <option value="">-- {{ __('Pilih Kampus') }} --</option>
                 @foreach ($kampus as $item)
                     <option value="{{ $item->id }}"
-                        {{ isset($peserta) && $peserta->kampus_id == $item->id ? 'selected' : '' }}>
+                        {{ isset($peserta) && $peserta->kampus_id == $item->id ? 'selected' : (old('kampus_id') == $item->id ? 'selected' : '') }}>
                         {{ $item->nama_kampus }}
                     </option>
                 @endforeach
@@ -32,6 +32,7 @@
             @enderror
         </div>
     </div>
+
 
     <div class="col-md-6">
         <div class="form-group">
@@ -74,6 +75,26 @@
             @enderror
         </div>
     </div>
+
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="is_verified">{{ __('Status Verifikasi') }}</label>
+            <select name="is_verified" id="is_verified" class="form-select @error('is_verified') is-invalid @enderror"
+                required>
+                <option value="No"
+                    {{ (isset($peserta) && $peserta->is_verified == 'No') || old('is_verified') == 'No' ? 'selected' : '' }}>
+                    Belum Diverifikasi</option>
+                <option value="Yes"
+                    {{ (isset($peserta) && $peserta->is_verified == 'Yes') || old('is_verified') == 'Yes' ? 'selected' : '' }}>
+                    Sudah Diverifikasi</option>
+            </select>
+            @error('is_verified')
+                <span class="text-danger">
+                    {{ $message }}
+                </span>
+            @enderror
+        </div>
+    </div>
     <div class="col-md-6">
         <div class="form-group">
             <label for="password">{{ __('Password') }}</label>
@@ -87,7 +108,7 @@
             @enderror
             @isset($peserta)
                 <div id="PasswordHelpBlock" class="form-text">
-                    {{ __('Leave the Password & Password Confirmation blank if you don`t want to change them.') }}
+                    {{ __('Biarkan kosong jika tidak ingin mengubah password.') }}
                 </div>
             @endisset
         </div>
@@ -95,9 +116,9 @@
 
     <div class="col-md-6">
         <div class="form-group">
-            <label for="password-confirmation">{{ __('Password Confirmation') }}</label>
-            <input type="password" name="password_confirmation" id="password-confirmation" class="form-control"
-                placeholder="{{ __('Password Confirmation') }}" {{ empty($peserta) ? ' required' : '' }} />
+            <label for="password-confirmation">{{ __('Konfirmasi Password') }}</label> <input type="password"
+                name="password_confirmation" id="password-confirmation" class="form-control"
+                placeholder="{{ __('Konfirmasi Password') }}" {{ empty($peserta) ? ' required' : '' }} />
         </div>
     </div>
 </div>

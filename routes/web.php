@@ -23,6 +23,10 @@ Route::prefix('panel-peserta')->group(function () {
         Route::post('/login', [AuthController::class, 'login']);
     });
 
+    Route::get('/verify-email/{email}/{token}', [AuthController::class, 'verifyEmail'])
+        ->name('panel-peserta.verify.email');
+
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('panel-peserta.logout');
 
     Route::middleware('auth:panel-peserta')->group(function () {
