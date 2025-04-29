@@ -3,18 +3,17 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\URL;
-use App\Models\Peserta; // Pastikan model Peserta di-import
+use App\Models\Peserta;
 
-class CustomVerifyEmail extends Notification implements ShouldQueue // Implementasi ShouldQueue agar email dikirim di background
+class CustomVerifyEmail extends Notification
 {
     use Queueable;
 
     protected $token;
-    protected Peserta $peserta; // Tambahkan properti untuk menyimpan data peserta
+    protected Peserta $peserta;
 
     /**
      * Create a new notification instance.
@@ -22,10 +21,10 @@ class CustomVerifyEmail extends Notification implements ShouldQueue // Implement
      * @param string $token
      * @param Peserta $peserta
      */
-    public function __construct(string $token, Peserta $peserta) // Terima objek Peserta
+    public function __construct(string $token, Peserta $peserta)
     {
         $this->token = $token;
-        $this->peserta = $peserta; // Simpan objek Peserta
+        $this->peserta = $peserta;
     }
 
     /**
@@ -43,26 +42,19 @@ class CustomVerifyEmail extends Notification implements ShouldQueue // Implement
      */
     public function toMail(object $notifiable): MailMessage
     {
-        // Buat URL verifikasi sesuai format yang Anda inginkan
-        // Pastikan APP_URL di .env sudah benar
-        // Gunakan route() jika Anda mendefinisikan route bernama
         $verificationUrl = URL::temporarySignedRoute(
-            'panel-peserta.verify.email', // Nama route (akan dibuat di langkah 7)
-            now()->addMinutes(60), // Link berlaku selama 60 menit
+            'panel-peserta.verify.email',
+            now()->addMinutes(60),
             ['email' => $notifiable->getEmailForVerification(), 'token' => $this->token]
         );
 
-        // Custom URL seperti permintaan awal (kurang aman tanpa signed URL)
-        // $verificationUrl = config('app.url') . "/verified-peserta?email=" . urlencode($notifiable->getEmailForVerification()) . "&token=" . $this->token;
-
-
         return (new MailMessage)
-            ->subject('Verifikasi Alamat Email Anda') // Judul Email
-            ->greeting('Halo ' . $this->peserta->nama . ',') // Sapaan
-            ->line('Terima kasih telah mendaftar. Silakan klik tombol di bawah ini untuk memverifikasi alamat email Anda.') // Baris 1
-            ->action('Verifikasi Email', $verificationUrl) // Tombol Aksi
-            ->line('Jika Anda tidak membuat akun ini, abaikan email ini.') // Baris 2
-            ->salutation('Hormat kami, Tim Aplikasi Seminar'); // Salam Penutup
+            ->subject('Verifikasi Alamat Email Anda')
+            ->greeting('Halo ' . $this->peserta->nama . ',')
+            ->line('Terima kasih telah mendaftar. Silakan klik tombol di bawah ini untuk memverifikasi alamat email Anda.')
+            ->action('Verifikasi Email', $verificationUrl)
+            ->line('Jika Anda tidak membuat akun ini, abaikan email ini.')
+            ->salutation('Hormat kami, Tim Aplikasi Seminar');
     }
 
     /**
