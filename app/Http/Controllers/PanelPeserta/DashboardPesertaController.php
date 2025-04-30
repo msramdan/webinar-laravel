@@ -21,6 +21,7 @@ class DashboardPesertaController extends Controller
     public function seminarSaya()
     {
         $pesertaId = Auth::guard('panel-peserta')->user()->id;
+        $namaPeserta = Auth::guard('panel-peserta')->user()->nama; // Ambil nama peserta
 
         $pendaftaran = DB::table('pendaftaran as p') // Alias tabel pendaftaran
             ->join('sesi_seminar as ss', 'p.sesi_id', '=', 'ss.id') // Alias sesi_seminar
@@ -29,17 +30,17 @@ class DashboardPesertaController extends Controller
             ->where('p.peserta_id', $pesertaId)
             ->select(
                 'p.id',
-                'p.token',
+                'p.token', // Pastikan token ada jika diperlukan untuk QR
                 'sm.nama_seminar',
                 'ss.nama_sesi',
                 'p.status',
                 'p.tanggal_pengajuan',
                 'ss.tanggal_pelaksanaan',
                 'ss.link_gmeet',
-                'sm.show_sertifikat', // <-- Ambil kolom ini
-                DB::raw('COUNT(pr.id) > 0 as sudah_presensi') // <-- Cek apakah ada record presensi
+                'sm.show_sertifikat',
+                DB::raw('COUNT(pr.id) > 0 as sudah_presensi')
             )
-            ->groupBy( // <-- Tambahkan groupBy untuk memastikan agregasi COUNT benar
+            ->groupBy( // Group by semua kolom non-agregat
                 'p.id',
                 'p.token',
                 'sm.nama_seminar',
@@ -53,8 +54,14 @@ class DashboardPesertaController extends Controller
             ->orderBy('p.id', 'desc')
             ->get();
 
-        return view('panel-peserta.seminar_saya', compact('pendaftaran')); //
-    } //
+        // Tambahkan nama peserta ke setiap item pendaftaran untuk view
+        $pendaftaran->each(function ($item) use ($namaPeserta) {
+            $item->nama_peserta = $namaPeserta;
+        });
+
+
+        return view('panel-peserta.seminar_saya', compact('pendaftaran'));
+    }
 
     public function downloadSertifikat($pendaftaranId)
     {
@@ -142,29 +149,37 @@ class DashboardPesertaController extends Controller
         return view('panel-peserta.semua_seminar', compact('seminars'));
     }
 
-
-
     public function downloadQRCode($id)
     {
-        $registration = DB::table('pendaftaran')
-            ->join('peserta', 'pendaftaran.peserta_id', '=', 'peserta.id')
-            ->where('pendaftaran.id', $id)
-            ->select('pendaftaran.*', 'peserta.nama as peserta_nama')
+        $pesertaId = Auth::guard('panel-peserta')->user()->id; // Validasi kepemilikan
+
+        $registration = DB::table('pendaftaran as p')
+            ->join('peserta as ps', 'p.peserta_id', '=', 'ps.id')
+            ->join('sesi_seminar as ss', 'p.sesi_id', '=', 'ss.id') // Join sesi
+            ->where('p.id', $id)
+            ->where('p.peserta_id', $pesertaId) // Cek kepemilikan
+            ->select('p.*', 'ps.nama as peserta_nama', 'ss.nama_sesi') // Ambil nama sesi
             ->first();
 
-        if (!$registration || $registration->status != 'Approved') {
-            abort(404, 'QR Code hanya tersedia untuk peserta dengan status Approved');
+        if (!$registration) {
+            abort(404, 'Pendaftaran tidak ditemukan atau Anda tidak berhak mengakses QR ini.');
         }
 
+        if ($registration->status != 'Approved') {
+            abort(403, 'QR Code hanya tersedia untuk pendaftaran yang sudah disetujui (Approved).');
+        }
+
+        // Gunakan data yang lebih relevan untuk QR presensi
         $qrData = json_encode([
-            'sesi_id' => $registration->sesi_id,
+            'pendaftaran_id' => $registration->id,
             'peserta_id' => $registration->peserta_id,
-            'token' => $registration->token,
-            'timestamp' => now()->toDateTimeString()
+            'sesi_id' => $registration->sesi_id,
+            'token' => $registration->token // Sertakan token jika masih digunakan untuk validasi scan
         ]);
 
+
         $renderer = new ImageRenderer(
-            new RendererStyle(300),
+            new RendererStyle(300), // Ukuran QR code
             new SvgImageBackEnd()
         );
 
@@ -175,9 +190,64 @@ class DashboardPesertaController extends Controller
 
         return response($svg, 200, [
             'Content-Type' => 'image/svg+xml',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"' // Paksa download
         ]);
     }
+
+    // --- METHOD BARU UNTUK MENGAMBIL DATA QR VIA AJAX ---
+    public function generateQrCodeData($id)
+    {
+        $pesertaId = Auth::guard('panel-peserta')->user()->id; // Validasi kepemilikan
+
+        $registration = DB::table('pendaftaran as p')
+            ->join('peserta as ps', 'p.peserta_id', '=', 'ps.id')
+            ->join('sesi_seminar as ss', 'p.sesi_id', '=', 'ss.id') // Join sesi
+            ->where('p.id', $id)
+            ->where('p.peserta_id', $pesertaId) // Cek kepemilikan
+            ->select('p.*', 'ps.nama as peserta_nama', 'ss.nama_sesi') // Ambil nama sesi
+            ->first();
+
+        // Validasi: Tidak ditemukan atau bukan milik user
+        if (!$registration) {
+            return response()->json(['error' => 'Pendaftaran tidak ditemukan atau Anda tidak berhak.'], 404);
+        }
+
+        // Validasi: Status belum Approved
+        if ($registration->status != 'Approved') {
+            return response()->json(['error' => 'QR Code hanya tersedia untuk pendaftaran yang sudah disetujui.'], 403);
+        }
+
+        // Data untuk di-encode dalam QR Code
+        $qrData = json_encode([
+            'pendaftaran_id' => $registration->id,
+            'peserta_id' => $registration->peserta_id,
+            'sesi_id' => $registration->sesi_id,
+            'token' => $registration->token // Sertakan token jika masih digunakan untuk validasi scan
+        ]);
+
+
+        // Generate SVG QR Code
+        try {
+            $renderer = new ImageRenderer(
+                new RendererStyle(250), // Ukuran QR code (sesuaikan dengan modal)
+                new SvgImageBackEnd()
+            );
+            $writer = new Writer($renderer);
+            $svg = $writer->writeString($qrData);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Gagal membuat QR Code.'], 500);
+        }
+
+
+        // Kembalikan data sebagai JSON
+        return response()->json([
+            'svg' => $svg,
+            'nama_peserta' => $registration->peserta_nama,
+            'nama_sesi' => $registration->nama_sesi,
+            'download_url' => route('pendaftaran.qrcode.download.peserta', ['id' => $id]) // URL untuk tombol download
+        ]);
+    }
+
 
     public function lihatSesi($id)
     {

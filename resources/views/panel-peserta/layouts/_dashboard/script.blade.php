@@ -1,4 +1,3 @@
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{{ asset('asset-peserta/temp/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ asset('asset-peserta/temp/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
 <script src="{{ asset('asset-peserta/temp/js/sb-admin-2.min.js') }}"></script>

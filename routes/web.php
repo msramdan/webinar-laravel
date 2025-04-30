@@ -26,7 +26,6 @@ Route::prefix('panel-peserta')->group(function () {
     Route::get('/verify-email/{email}/{token}', [AuthController::class, 'verifyEmail'])
         ->name('panel-peserta.verify.email');
 
-
     Route::post('/logout', [AuthController::class, 'logout'])->name('panel-peserta.logout');
 
     Route::middleware('auth:panel-peserta')->group(function () {
@@ -40,12 +39,16 @@ Route::prefix('panel-peserta')->group(function () {
             ->name('panel-peserta.lihatSesi');
         Route::post('/seminar/register', [DashboardPesertaController::class, 'register'])
             ->name('panel-peserta.register.seminar');
-
         Route::get('/sertifikat/download/{pendaftaranId}', [DashboardPesertaController::class, 'downloadSertifikat'])
             ->name('panel-peserta.sertifikat.download');
+
+
+        Route::get('/generate-qrcode-data/{id}', [DashboardPesertaController::class, 'generateQrCodeData'])
+            ->name('panel-peserta.qrcode.generate');
     });
 });
 
+// Middleware 'auth' dan 'web' untuk admin panel
 Route::middleware(['auth', 'web'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', App\Http\Controllers\ProfileController::class)->name('profile');
@@ -72,7 +75,6 @@ Route::middleware(['auth', 'web'])->group(function () {
         Route::get('/{id}/download-qrcode', 'downloadQRCode')->name('pendaftaran.qrcode.download');
     });
 
-
     Route::prefix('laporan')->controller(LaporanPresensiController::class)->group(function () {
         Route::get('/', 'index')->name('laporan.index');
         Route::get('/sesi-seminar/{id}', 'laporanSesiSeminar')->name('laporan.sesi.seminar');
@@ -92,7 +94,6 @@ Route::middleware(['auth', 'web'])->group(function () {
         Route::controller(SeminarController::class)->group(function () {
             Route::get('/{id}/sesi-seminat', 'showSesi')->name('seminar.sesi.show');
         });
-
 
         Route::prefix('{seminar}/pembicara')->controller(PembicaraController::class)->group(function () {
             Route::get('/', 'index')->name('pembicara.index');
