@@ -36,6 +36,7 @@ class DashboardPesertaController extends Controller
                 'p.status',
                 'p.tanggal_pengajuan',
                 'ss.tanggal_pelaksanaan',
+                'ss.tempat_seminar',
                 'ss.link_gmeet',
                 'sm.show_sertifikat',
                 DB::raw('COUNT(pr.id) > 0 as sudah_presensi')
@@ -48,6 +49,7 @@ class DashboardPesertaController extends Controller
                 'p.status',
                 'p.tanggal_pengajuan',
                 'ss.tanggal_pelaksanaan',
+                'ss.tempat_seminar',
                 'ss.link_gmeet',
                 'sm.show_sertifikat'
             )

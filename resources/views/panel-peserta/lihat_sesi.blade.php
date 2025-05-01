@@ -25,6 +25,7 @@
                                         <th>Kuota</th>
                                         <th>Harga Tiket</th>
                                         <th>Lampiran</th>
+                                        <th>Tempat</th>
                                         <th>Tanggal Pelaksanaan</th>
                                         <th>Registrasi</th>
                                     </tr>
@@ -34,15 +35,16 @@
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $session->nama_sesi }}</td>
-                                            <td>{{ $session->kuota }} - {{ $session->kuota - $session->filled_kuota }} Sisa Kuota</td>
+                                            <td>{{ $session->kuota }} - {{ $session->kuota - $session->filled_kuota }} Sisa
+                                                Kuota</td>
                                             <td>{{ $session->harga_tiket }}</td>
                                             <td>
                                                 <a href="{{ asset('storage/uploads/sesi/' . $session->lampiran) }}"
-                                                   target="_blank"
-                                                   class="btn btn-sm btn-outline-primary">
-                                                   <i class="bi bi-file-earmark-text"></i> Download
+                                                    target="_blank" class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-file-earmark-text"></i> Download
                                                 </a>
-                                              </td>
+                                            </td>
+                                            <td>{{ $session->tempat_seminar }}</td>
                                             <td>{{ \Carbon\Carbon::parse($session->tanggal_pelaksanaan)->format('d-m-Y H:i') }}
                                             </td>
                                             <td>

@@ -29,6 +29,7 @@
                                         <th>Sesi</th>
                                         <th>Status</th>
                                         <th>Tanggal Pengajuan</th>
+                                        <th>Tempat</th>
                                         <th>Tanggal Pelaksanaan</th>
                                         <th>Aksi</th>
                                     </tr>
@@ -51,6 +52,7 @@
                                             </td>
                                             <td>{{ \Carbon\Carbon::parse($item->tanggal_pengajuan)->format('d M Y H:i') }}
                                             </td>
+                                            <td>{{ $item->tempat_seminar }}</td>
                                             <td>{{ \Carbon\Carbon::parse($item->tanggal_pelaksanaan)->format('d M Y H:i') }}
                                             </td>
                                             <td>
