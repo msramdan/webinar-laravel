@@ -70,7 +70,10 @@ class LaporanPresensiController extends Controller implements HasMiddleware
                 if (auth()->user()->can('laporan presensi export')) {
                     $buttons .= '
                     <a href="' . route('laporan.presensi.download', ['sesi' => $row->id]) . '" class="btn btn-sm btn-danger">
-                        <i class="fas fa-file-pdf"></i> Download
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </a>
+                                        <a href="' . route('laporan.presensi.download', ['sesi' => $row->id]) . '" class="btn btn-sm btn-success">
+                        <i class="fas fa-file-excel"></i> Excel
                     </a>
                 ';
                 }
