@@ -6,14 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
 use Illuminate\Support\Str;
 use BaconQrCode\Writer;
 use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Hash;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class DashboardPesertaController extends Controller
 {
@@ -387,5 +387,53 @@ class DashboardPesertaController extends Controller
 
             return response()->json(['message' => 'Pendaftaran berhasil. Menunggu konfirmasi dari admin.']);
         }
+    }
+
+
+
+    public function getProfile()
+    {
+        $pesertaId = Auth::guard('panel-peserta')->user()->id;
+        $peserta = DB::table('peserta')
+            ->join('kampus', 'peserta.kampus_id', '=', 'kampus.id')
+            ->select('peserta.*', 'kampus.nama_kampus')
+            ->where('peserta.id', $pesertaId)
+            ->first();
+
+        $kampus = DB::table('kampus')->get();
+
+        return view('panel-peserta.update_profile', compact('peserta', 'kampus'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $pesertaId = Auth::guard('panel-peserta')->user()->id;
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'no_telepon' => 'required|string|max:15',
+            'email' => 'required|email|unique:peserta,email,' . $pesertaId,
+            'alamat' => 'required|string',
+            'kampus_id' => 'required|exists:kampus,id',
+            'password' => 'nullable|string|min:6|confirmed', // optional password
+        ]);
+
+        $data = [
+            'nama' => $request->nama,
+            'no_telepon' => $request->no_telepon,
+            'email' => $request->email,
+            'alamat' => $request->alamat,
+            'kampus_id' => $request->kampus_id,
+            'updated_at' => now(),
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        DB::table('peserta')
+            ->where('id', $pesertaId)
+            ->update($data);
+        Alert::toast('Profil berhasil diperbarui.', 'success');
+        return redirect()->back();
     }
 }

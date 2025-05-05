@@ -41,10 +41,12 @@ Route::prefix('panel-peserta')->group(function () {
             ->name('panel-peserta.register.seminar');
         Route::get('/sertifikat/download/{pendaftaranId}', [DashboardPesertaController::class, 'downloadSertifikat'])
             ->name('panel-peserta.sertifikat.download');
-
-
         Route::get('/generate-qrcode-data/{id}', [DashboardPesertaController::class, 'generateQrCodeData'])
             ->name('panel-peserta.qrcode.generate');
+        Route::get('/profil', [DashboardPesertaController::class, 'getProfile'])
+            ->name('panel-peserta.profil');
+        Route::post('/profil/update', [DashboardPesertaController::class, 'updateProfile'])
+            ->name('panel-peserta.profil.update');
     });
 });
 

@@ -6,8 +6,9 @@
         <li class="nav-item dropdown no-arrow">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->name }}</span>
-                <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim(auth()->user()->email))) }}&s=30"
+                <span
+                    class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::guard('panel-peserta')->user()->nama }}</span>
+                <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim(Auth::guard('panel-peserta')->user()->email))) }}&s=30"
                     alt="Avatar" class="img-profile rounded-circle">
             </a>
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">

@@ -5,5 +5,3 @@
     rel="stylesheet">
 <link href="{{ asset('asset-peserta/temp/css/sb-admin-2.min.css') }}" rel="stylesheet">
 <link href="{{ asset('asset-peserta/temp/vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
-<script src="{{ asset('asset-peserta/temp/vendor/jquery/jquery.min.js') }}"></script>
-

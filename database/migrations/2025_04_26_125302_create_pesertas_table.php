@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('alamat');
             $table->foreignId('kampus_id')
                 ->constrained('kampus')
-                ->onDelete('restrict'); // Prevent deletion if there are any related peserta
+                ->onDelete('restrict');
             $table->string('password');
             $table->timestamps();
         });

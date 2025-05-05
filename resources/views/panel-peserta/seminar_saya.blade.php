@@ -145,13 +145,9 @@
 @endsection
 
 @push('js')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {{-- Anda bisa kembalikan ini jika diperlukan --}}
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-
     <script>
         $(document).ready(function() {
-            console.log('Document Ready. Initializing DataTable...'); // Log Awal
-            // Inisialisasi DataTable (Jika error DataTable sudah fix, ini seharusnya jalan)
             try {
                 $('#dataTable').DataTable({
                     "responsive": true,

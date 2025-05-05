@@ -7,14 +7,20 @@
     </a>
     <hr class="sidebar-divider my-0">
     <li class="nav-item">
-        <a class="nav-link" href="{{route('panel-peserta.seminarSaya')}}">
+        <a class="nav-link" href="{{ route('panel-peserta.seminarSaya') }}">
             <i class="fas fa-fw fa-list"></i>
             <span>Seminar Saya</span></a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="{{route('panel-peserta.semuaSeminar')}}">
+        <a class="nav-link" href="{{ route('panel-peserta.semuaSeminar') }}">
             <i class="fas fa-fw fa-table"></i>
             <span>Semua Seminar</span></a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('panel-peserta.profil') }}">
+            <i class="fas fa-fw fa-user"></i>
+            <span>Profile</span></a>
     </li>
 
     <div class="text-center d-none d-md-inline">
