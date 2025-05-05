@@ -67,9 +67,17 @@
                                             <option value="all" {{ $selectedSession == 'all' ? 'selected' : '' }}>Semua
                                                 Sesi</option>
                                             @foreach ($sessions as $session)
+                                                @php
+                                                    $jumlahApproved = DB::table('pendaftaran')
+                                                        ->where('sesi_id', $session->id)
+                                                        ->where('status', 'approved')
+                                                        ->count();
+                                                    $sisaKuota = $session->kuota - $jumlahApproved;
+                                                @endphp
                                                 <option value="{{ $session->id }}"
                                                     {{ $selectedSession == $session->id ? 'selected' : '' }}>
-                                                    {{ $session->nama_sesi }}
+                                                    {{ $session->nama_sesi }} - Kuota: {{ $session->kuota }}, Sisa:
+                                                    {{ $sisaKuota }}
                                                 </option>
                                             @endforeach
                                         </select>
