@@ -49,6 +49,7 @@
                                         <th>Nama Sesi</th>
                                         <th>Tempat Seminar</th>
                                         <th>Kuota</th>
+                                        <th>Sisa Kuota</th>
                                         <th>Harga Tiket</th>
                                         <th>Tanggal Pelaksanaan</th>
                                         <th>Link GMeet</th>
@@ -96,7 +97,8 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="tempat_seminar">Tempat Seminar</label>
-                                    <input type="text" class="form-control" id="tempat_seminar" name="tempat_seminar" required>
+                                    <input type="text" class="form-control" id="tempat_seminar" name="tempat_seminar"
+                                        required>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -191,6 +193,10 @@
                     {
                         data: 'kuota',
                         name: 'kuota'
+                    },
+                    {
+                        data: 'sisa_kuota',
+                        name: 'sisa_kuota'
                     },
                     {
                         data: 'harga',
