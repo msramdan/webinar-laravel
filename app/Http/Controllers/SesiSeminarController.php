@@ -12,14 +12,14 @@ class SesiSeminarController extends Controller
     public function index($seminarId)
     {
         $seminar = DB::table('seminar')->where('id', $seminarId)->first();
-        return view('sesi.index', compact('seminar'));
+        return view('seminar.sesi', compact('seminar'));
     }
 
     public function getData($seminarId)
     {
         $sesi = DB::table('sesi_seminar')
             ->where('seminar_id', $seminarId)
-            ->select(['id', 'nama_sesi', 'kuota', 'harga_tiket', 'tanggal_pelaksanaan', 'link_gmeet', 'created_at','tempat_seminar']);
+            ->select(['id', 'nama_sesi', 'kuota', 'harga_tiket', 'tanggal_pelaksanaan', 'link_gmeet', 'created_at', 'tempat_seminar']);
 
         return DataTables::of($sesi)
             ->addIndexColumn()
@@ -28,6 +28,14 @@ class SesiSeminarController extends Controller
             })
             ->addColumn('tanggal', function ($row) {
                 return date('d M Y H:i', strtotime($row->tanggal_pelaksanaan));
+            })
+            ->addColumn('sisa_kuota', function ($row) {
+                $approvedCount = DB::table('pendaftaran')
+                    ->where('sesi_id', $row->id)
+                    ->where('status', 'Approved') // Pastikan status 'Approved'
+                    ->count();
+                $sisaKuota = $row->kuota - $approvedCount;
+                return $sisaKuota < 0 ? 0 : $sisaKuota; // Pastikan tidak minus
             })
             ->addColumn('action', function ($row) {
                 $buttons = '';
@@ -121,7 +129,7 @@ class SesiSeminarController extends Controller
         if ($request->hasFile('lampiran')) {
             // Delete old file if exists
             if ($lampiranPath) {
-                Storage::disk('public')->delete('uploads/sesi/'.$lampiranPath);
+                Storage::disk('public')->delete('uploads/sesi/' . $lampiranPath);
             }
             $lampiranPath = $request->file('lampiran')->store('uploads/sesi', 'public');
             $lampiranPath = basename($lampiranPath);
@@ -147,7 +155,7 @@ class SesiSeminarController extends Controller
         $sesi = DB::table('sesi_seminar')->where('id', $id)->first();
 
         if ($sesi->lampiran) {
-            Storage::disk('public')->delete('uploads/sesi/'.$sesi->lampiran);
+            Storage::disk('public')->delete('uploads/sesi/' . $sesi->lampiran);
         }
 
         DB::table('sesi_seminar')->where('id', $id)->delete();

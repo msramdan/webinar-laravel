@@ -82,6 +82,7 @@ Route::middleware(['auth', 'web'])->group(function () {
         Route::get('/sesi-seminar/{id}', 'laporanSesiSeminar')->name('laporan.sesi.seminar');
         Route::get('/laporan-sesi-seminar/{seminar}', 'getData')->name('laporan.sesi.data');
         Route::get('/download-presensi/{sesi}', 'downloadPresensi')->name('laporan.presensi.download');
+        Route::get('/download-presensi/excel/{sesi}', 'downloadPresensiExcel')->name('laporan.presensi.download.excel');
     });
 
     Route::prefix('seminar')->group(function () {
